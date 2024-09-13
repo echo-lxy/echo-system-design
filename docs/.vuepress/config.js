@@ -4,7 +4,11 @@ import { defineUserConfig } from "vuepress"
 import { viteBundler } from "@vuepress/bundler-vite"
 
 export default defineUserConfig({
-  base: "/echo-system-design/",
+  base: "/echo-system-design", //默认路径
+  head: [
+    // 设置 favor.ico，.vuepress/public 下
+    ["link", { rel: "icon", href: "/logo.png" }],
+  ],
   title: "Echo 系统设计之美",
   description: "将系统设计技能提升到一个新水平所需的一切",
 
@@ -29,6 +33,10 @@ export default defineUserConfig({
         link: "/article/design-algorithm/",
       },
       {
+        text: "问答归档",
+        link: "/article/question/",
+      },
+      {
         text: "网站动态",
         link: "/article/timeline/",
       },
@@ -38,28 +46,40 @@ export default defineUserConfig({
         {
           text: "设计热门应用",
           // 相对路径会自动追加子路径前缀
-          children: ["twitter.md", "wechat.md"],
+          children: ["readme.md", "twitter.md", "wechat.md"],
         },
       ],
       "/article/design-infrastructure/": [
         {
           text: "设计基础设施",
           // 相对路径会自动追加子路径前缀
-          children: ["distributed-cache.md", "rate-limiting.md", "top-k.md"],
+          children: [
+            "readme.md",
+            "distributed-cache.md",
+            "rate-limiting.md",
+            "top-k.md",
+          ],
         },
       ],
       "/article/design-algorithm/": [
         {
           text: "系统设计算法",
           // 相对路径会自动追加子路径前缀
-          children: ["bloom-filter.md", "consistent-hashing.md"],
+          children: ["readme.md", "bloom-filter.md", "consistent-hashing.md"],
+        },
+      ],
+      "/article/question/": [
+        {
+          text: "问答归档",
+          // 相对路径会自动追加子路径前缀
+          children: ["readme.md"],
         },
       ],
       "/article/timeline/": [
         {
           text: "网站动态",
           // 相对路径会自动追加子路径前缀
-          children: ["twitter.md", "wechat.md"],
+          children: ["readme.md"],
         },
       ],
     },

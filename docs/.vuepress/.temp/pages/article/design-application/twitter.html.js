@@ -1,5 +1,5 @@
 import comp from "E:/echo/docs/.vuepress/.temp/pages/article/design-application/twitter.html.vue"
-const data = JSON.parse("{\"path\":\"/article/design-application/twitter.html\",\"title\":\"设计推特\",\"lang\":\"zh-CN\",\"frontmatter\":{\"lang\":\"zh-CN\",\"title\":\"设计推特\",\"description\":\"设计推特\"},\"headers\":[],\"git\":{},\"filePathRelative\":\"article/design-application/twitter.md\",\"excerpt\":\"\"}")
+const data = JSON.parse("{\"path\":\"/article/design-application/twitter.html\",\"title\":\"设计推特\",\"lang\":\"zh-CN\",\"frontmatter\":{\"lang\":\"zh-CN\",\"title\":\"设计推特\",\"description\":\"设计推特\"},\"headers\":[],\"git\":{\"updatedTime\":1726222274000,\"contributors\":[{\"name\":\"echo-lxy\",\"email\":\"lixinyang200205@163.com\",\"commits\":1}]},\"filePathRelative\":\"article/design-application/twitter.md\",\"excerpt\":\"\"}")
 export { comp, data }
 
 if (import.meta.webpackHot) {

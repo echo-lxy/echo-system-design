@@ -8,7 +8,10 @@ h1 *, h2 *, h3 *,h4 *, h5 *, h6 * {
   --vp-c-accent-bg: #0056d6;
   --vp-c-accent-hover: #0061ff; /* 悬停时稍微更亮 */
  
-
+  .vp-hero-image {
+    max-width: 180px;
+    height: auto;
+  }
   
   strong {
     color: #0056d6; /* 锐利但柔和的蓝色 */

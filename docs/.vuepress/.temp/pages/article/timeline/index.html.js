@@ -1,5 +1,5 @@
 import comp from "E:/echo/docs/.vuepress/.temp/pages/article/timeline/index.html.vue"
-const data = JSON.parse("{\"path\":\"/article/timeline/\",\"title\":\"\",\"lang\":\"en-US\",\"frontmatter\":{},\"headers\":[],\"git\":{},\"filePathRelative\":\"article/timeline/readme.md\",\"excerpt\":\"<p>请点击右侧目录！</p>\\n\"}")
+const data = JSON.parse("{\"path\":\"/article/timeline/\",\"title\":\"介绍\",\"lang\":\"en-US\",\"frontmatter\":{},\"headers\":[],\"git\":{\"updatedTime\":null,\"contributors\":[]},\"filePathRelative\":\"article/timeline/README.md\",\"excerpt\":\"\\n\"}")
 export { comp, data }
 
 if (import.meta.webpackHot) {

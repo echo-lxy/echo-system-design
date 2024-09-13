@@ -1,4 +1,4 @@
-export const siteData = JSON.parse("{\"base\":\"/\",\"lang\":\"en-US\",\"title\":\"Echo 系统设计之美\",\"description\":\"将系统设计技能提升到一个新水平所需的一切\",\"head\":[],\"locales\":{}}")
+export const siteData = JSON.parse("{\"base\":\"/echo-system-design/\",\"lang\":\"en-US\",\"title\":\"Echo 系统设计之美\",\"description\":\"将系统设计技能提升到一个新水平所需的一切\",\"head\":[[\"link\",{\"rel\":\"icon\",\"href\":\"/logo.png\"}]],\"locales\":{}}")
 
 if (import.meta.webpackHot) {
   import.meta.webpackHot.accept()

@@ -1,8 +1,4 @@
----
-lang: zh-CN
-title: 热点数据服务
-description: 热点数据服务Calculate top 100 list for last
----
+# 热点数据服务
 
 ## 概述
 

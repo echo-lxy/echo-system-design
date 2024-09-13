@@ -1,4 +1,5 @@
-<template><div><h2 id="概述" tabindex="-1"><a class="header-anchor" href="#概述"><span>概述</span></a></h2>
+<template><div><h1 id="热点数据服务" tabindex="-1"><a class="header-anchor" href="#热点数据服务"><span>热点数据服务</span></a></h1>
+<h2 id="概述" tabindex="-1"><a class="header-anchor" href="#概述"><span>概述</span></a></h2>
 <p>Top k 问题解决方案的各种应用（Google/Twitter/YouTube 趋势、热门产品、波动性股票、DDoS 攻击预防）。</p>
 <p>在这样的规模下，数据库或分布式缓存不是一个选项。我们可能正在处理 1M RPS。如果我们使用 DB 来跟踪视图计数，首先写入/更新会非常慢，然后找到前 K 项需要扫描整个数据集。</p>
 <p>也许 <strong>MapReduce</strong> 可以提供帮助。但这还不够。我们需要尽可能接近实时地返回重磅统计数据。</p>
