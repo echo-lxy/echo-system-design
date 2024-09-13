@@ -6,8 +6,10 @@ import { viteBundler } from "@vuepress/bundler-vite"
 export default defineUserConfig({
   base: "/echo-system-design", //默认路径
   head: [
-    // 设置 favor.ico，.vuepress/public 下
-    ["link", { rel: "icon", href: "/logo.png" }],
+    [
+      "link",
+      { rel: "shortcut icon", type: "image/x-icon", href: `./favicon.ico` },
+    ],
   ],
   title: "Echo 系统设计之美",
   description: "将系统设计技能提升到一个新水平所需的一切",
