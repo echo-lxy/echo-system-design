@@ -4,6 +4,7 @@ import { defineUserConfig } from "vuepress"
 import { viteBundler } from "@vuepress/bundler-vite"
 
 export default defineUserConfig({
+  base: "/echo-system-design/",
   title: "Echo 系统设计之美",
   description: "将系统设计技能提升到一个新水平所需的一切",
 
