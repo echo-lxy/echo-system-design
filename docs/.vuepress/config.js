@@ -4,7 +4,7 @@ import { defineUserConfig } from "vuepress"
 import { viteBundler } from "@vuepress/bundler-vite"
 
 export default defineUserConfig({
-  base: "/echo-system-design", //默认路径
+  base: "/", //默认路径
   head: [
     [
       "link",
