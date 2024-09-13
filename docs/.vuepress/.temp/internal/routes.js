@@ -19,17 +19,17 @@ export const routes = Object.fromEntries([
   ["/posts/article9.html", { loader: () => import(/* webpackChunkName: "posts_article9.html" */"E:/echo/docs/.vuepress/.temp/pages/posts/article9.html.js"), meta: {"_blog":{"title":"Article 9","author":"","date":"2022-01-09T00:00:00.000Z","category":["CategoryA","CategoryB"],"tag":["tag C","tag D"],"excerpt":"\n<h2>Heading 2</h2>\n<p>Here is the content.</p>\n<h3>Heading 3</h3>\n<p>Here is the content.</p>\n"},"title":"Article 9"} }],
   ["/posts/sticky.html", { loader: () => import(/* webpackChunkName: "posts_sticky.html" */"E:/echo/docs/.vuepress/.temp/pages/posts/sticky.html.js"), meta: {"_blog":{"title":"Sticky Article","author":"","date":"2021-01-01T00:00:00.000Z","category":["CategoryC"],"tag":["tag E"],"excerpt":"<p>A sticky article demo.</p>"},"title":"Sticky Article"} }],
   ["/posts/sticky2.html", { loader: () => import(/* webpackChunkName: "posts_sticky2.html" */"E:/echo/docs/.vuepress/.temp/pages/posts/sticky2.html.js"), meta: {"_blog":{"title":"Sticky Article with Higher Priority","author":"","date":"2020-01-01T00:00:00.000Z","category":["CategoryC"],"tag":["tag E"],"excerpt":"\n<p>Excerpt information which is added manually.</p>\n"},"title":"Sticky Article with Higher Priority"} }],
-  ["/article/design-application/", { loader: () => import(/* webpackChunkName: "article_design-application_index.html" */"E:/echo/docs/.vuepress/.temp/pages/article/design-application/index.html.js"), meta: {"title":"介绍"} }],
-  ["/article/design-application/twitter.html", { loader: () => import(/* webpackChunkName: "article_design-application_twitter.html" */"E:/echo/docs/.vuepress/.temp/pages/article/design-application/twitter.html.js"), meta: {"title":"设计推特"} }],
-  ["/article/design-application/wechat.html", { loader: () => import(/* webpackChunkName: "article_design-application_wechat.html" */"E:/echo/docs/.vuepress/.temp/pages/article/design-application/wechat.html.js"), meta: {"title":"设计微信"} }],
   ["/article/design-algorithm/bloom-filter.html", { loader: () => import(/* webpackChunkName: "article_design-algorithm_bloom-filter.html" */"E:/echo/docs/.vuepress/.temp/pages/article/design-algorithm/bloom-filter.html.js"), meta: {"title":"布隆过滤"} }],
   ["/article/design-algorithm/consistent-hashing.html", { loader: () => import(/* webpackChunkName: "article_design-algorithm_consistent-hashing.html" */"E:/echo/docs/.vuepress/.temp/pages/article/design-algorithm/consistent-hashing.html.js"), meta: {"title":"一致性哈希"} }],
   ["/article/design-algorithm/", { loader: () => import(/* webpackChunkName: "article_design-algorithm_index.html" */"E:/echo/docs/.vuepress/.temp/pages/article/design-algorithm/index.html.js"), meta: {"title":"介绍"} }],
-  ["/article/question/", { loader: () => import(/* webpackChunkName: "article_question_index.html" */"E:/echo/docs/.vuepress/.temp/pages/article/question/index.html.js"), meta: {"title":"介绍"} }],
+  ["/article/design-application/", { loader: () => import(/* webpackChunkName: "article_design-application_index.html" */"E:/echo/docs/.vuepress/.temp/pages/article/design-application/index.html.js"), meta: {"title":"介绍"} }],
+  ["/article/design-application/twitter.html", { loader: () => import(/* webpackChunkName: "article_design-application_twitter.html" */"E:/echo/docs/.vuepress/.temp/pages/article/design-application/twitter.html.js"), meta: {"title":"设计推特"} }],
+  ["/article/design-application/wechat.html", { loader: () => import(/* webpackChunkName: "article_design-application_wechat.html" */"E:/echo/docs/.vuepress/.temp/pages/article/design-application/wechat.html.js"), meta: {"title":"设计微信"} }],
   ["/article/design-infrastructure/distributed-cache.html", { loader: () => import(/* webpackChunkName: "article_design-infrastructure_distributed-cache.html" */"E:/echo/docs/.vuepress/.temp/pages/article/design-infrastructure/distributed-cache.html.js"), meta: {"title":"分布式缓存"} }],
   ["/article/design-infrastructure/rate-limiting.html", { loader: () => import(/* webpackChunkName: "article_design-infrastructure_rate-limiting.html" */"E:/echo/docs/.vuepress/.temp/pages/article/design-infrastructure/rate-limiting.html.js"), meta: {"title":"限流器"} }],
   ["/article/design-infrastructure/", { loader: () => import(/* webpackChunkName: "article_design-infrastructure_index.html" */"E:/echo/docs/.vuepress/.temp/pages/article/design-infrastructure/index.html.js"), meta: {"title":"介绍"} }],
   ["/article/design-infrastructure/top-k.html", { loader: () => import(/* webpackChunkName: "article_design-infrastructure_top-k.html" */"E:/echo/docs/.vuepress/.temp/pages/article/design-infrastructure/top-k.html.js"), meta: {"title":"热点数据服务"} }],
+  ["/article/question/", { loader: () => import(/* webpackChunkName: "article_question_index.html" */"E:/echo/docs/.vuepress/.temp/pages/article/question/index.html.js"), meta: {"title":"介绍"} }],
   ["/article/timeline/", { loader: () => import(/* webpackChunkName: "article_timeline_index.html" */"E:/echo/docs/.vuepress/.temp/pages/article/timeline/index.html.js"), meta: {"title":"介绍"} }],
   ["/404.html", { loader: () => import(/* webpackChunkName: "404.html" */"E:/echo/docs/.vuepress/.temp/pages/404.html.js"), meta: {"title":""} }],
   ["/category/", { loader: () => import(/* webpackChunkName: "category_index.html" */"E:/echo/docs/.vuepress/.temp/pages/category/index.html.js"), meta: {"title":"Categories"} }],
@@ -48,3 +48,20 @@ export const routes = Object.fromEntries([
   ["/article/", { loader: () => import(/* webpackChunkName: "article_index.html" */"E:/echo/docs/.vuepress/.temp/pages/article/index.html.js"), meta: {"title":"Articles"} }],
   ["/timeline/", { loader: () => import(/* webpackChunkName: "timeline_index.html" */"E:/echo/docs/.vuepress/.temp/pages/timeline/index.html.js"), meta: {"title":"Timeline"} }],
 ]);
+
+if (import.meta.webpackHot) {
+  import.meta.webpackHot.accept()
+  if (__VUE_HMR_RUNTIME__.updateRoutes) {
+    __VUE_HMR_RUNTIME__.updateRoutes(routes)
+  }
+  if (__VUE_HMR_RUNTIME__.updateRedirects) {
+    __VUE_HMR_RUNTIME__.updateRedirects(redirects)
+  }
+}
+
+if (import.meta.hot) {
+  import.meta.hot.accept(({ routes, redirects }) => {
+    __VUE_HMR_RUNTIME__.updateRoutes(routes)
+    __VUE_HMR_RUNTIME__.updateRedirects(redirects)
+  })
+}

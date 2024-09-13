@@ -192,18 +192,20 @@ export default defineUserConfig({
     }),
   ],
 
-  bundler: viteBundler({
-    viteOptions: {
-      // 判断是否是生产环境
-      base:
-        process.env.NODE_ENV === "production"
-          ? "http://cdn.lxy2002.top/" // 设置生产环境下的 publicPath
-          : "/",
-      resolve: {
-        alias: {
-          public: path.resolve(__dirname, "./public"), // 配置路径别名
-        },
-      },
-    },
-  }),
+  bundler: viteBundler(),
+  //启用cdn
+  // {
+  //   viteOptions: {
+  //     // 判断是否是生产环境
+  //     base:
+  //       process.env.NODE_ENV === "production"
+  //         ? "http://cdn.lxy2002.top/" // 设置生产环境下的 publicPath
+  //         : "/",
+  //     resolve: {
+  //       alias: {
+  //         public: path.resolve(__dirname, "./public"), // 配置路径别名
+  //       },
+  //     },
+  //   },
+  // }
 })
