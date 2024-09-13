@@ -2,6 +2,7 @@ import { blogPlugin } from "@vuepress/plugin-blog"
 import { defaultTheme } from "@vuepress/theme-default"
 import { defineUserConfig } from "vuepress"
 import { viteBundler } from "@vuepress/bundler-vite"
+import replaceStringPlugin from "./plugins/vite-replace-string.js"
 
 export default defineUserConfig({
   base: "/", //默认路径
@@ -191,5 +192,15 @@ export default defineUserConfig({
     }),
   ],
 
-  bundler: viteBundler(),
+  bundler: viteBundler({
+    viteOptions: {
+      // 使用自定义插件并设置替换的字符串
+      plugins: [
+        replaceStringPlugin({
+          search: "https://echo.lxy2002.com/assets/", // 被替换的字符串
+          replace: "http://cdn.lxy2002.com/assets/", // 替换为的新字符串
+        }),
+      ],
+    },
+  }),
 })
