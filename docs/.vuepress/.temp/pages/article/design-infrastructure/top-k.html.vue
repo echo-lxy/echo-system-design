@@ -39,7 +39,7 @@
 </ul>
 </li>
 </ul>
-<p><img src="https://echo.lxy2002.top/assets/1726153626597-62c11054-f2e0-4b02-b219-08604c2bce4e.png" alt="img"></p>
+<p><img src="https://echo.lxy2002.com/assets/top-k.assets/1726153626597-62c11054-f2e0-4b02-b219-08604c2bce4e.png" alt="img"></p>
 <p><img src="@source/article/design-infrastructure/top-k.assets/1726153775993-9e9209b0-c7ff-4397-b97d-230d5f479f66.png" alt="img"></p>
 <h3 id="哈希表-多主机" tabindex="-1"><a class="header-anchor" href="#哈希表-多主机"><span>哈希表+多主机</span></a></h3>
 <ul>
