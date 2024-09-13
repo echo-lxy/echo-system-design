@@ -1,0 +1,19 @@
+h1 *, h2 *, h3 *,h4 *, h5 *, h6 * {
+  font-weight: bold;
+}
+
+:root {
+  // accent colors
+  --vp-c-accent: #0056d6; /* 锐利但不刺眼的蓝色 */
+  --vp-c-accent-bg: #0056d6;
+  --vp-c-accent-hover: #0061ff; /* 悬停时稍微更亮 */
+ 
+
+  
+  strong {
+    color: #0056d6; /* 锐利但柔和的蓝色 */
+  }
+
+}
+
+
