@@ -77,12 +77,12 @@ module.exports = {
         {
           iconClass: "icon-youjian",
           title: "发邮件",
-          link: "mailto:894072666@qq.com",
+          link: "mailto:lixinyang2002@163.com",
         },
         {
           iconClass: "icon-github",
           title: "GitHub",
-          link: "https://github.com/xugaoyi",
+          link: "https://github.com/echo-lxy",
         },
         {
           iconClass: "icon-erji",
