@@ -4,7 +4,7 @@ const htmlModules = require("./config/htmlModules.js")
 module.exports = {
   theme: "vdoing", // 使用依赖包主题
   // theme: require.resolve('../../vdoing'), // 使用本地主题 (先将vdoing主题文件下载到本地：https://github.com/xugaoyi/vuepress-theme-vdoing)
-  base: "/echo-system-design",
+  base: "/echo-system-design/",
   title: "Echo 系统设计之美",
   description: "将系统设计技能提升到一个新水平所需的一切",
   // base: '/', // 默认'/'。如果你想将你的网站部署到如 https://foo.github.io/bar/，那么 base 应该被设置成 "/bar/",（否则页面将失去样式等文件）
