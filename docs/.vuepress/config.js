@@ -20,21 +20,25 @@ module.exports = {
     pageButton: false,
     nav: [
       { text: "首页", link: "/" },
+      { text: "系统设计算法", link: "/pages/fccd91/" },
       {
         text: "设计基础设施",
         link: "/pages/84cb49/",
+      },
+      {
+        text: "系统设计鉴赏",
+        link: "/pages/264b06/",
       },
       {
         text: "设计热门应用",
         link: "/pages/a95d7d/",
       },
       {
-        text: "场景设计",
+        text: "经典场景设计",
         link: "/pages/def08a/",
       },
-      { text: "系统设计算法", link: "/pages/fccd91/" },
       { text: "问答归档", link: "/pages/92b2ee/" },
-      { text: "网站动态", link: "/pages/9b3c80/" },
+      { text: "我的动态", link: "/pages/52ebd8/" },
     ],
     sidebarDepth: 2, // 侧边栏显示深度，默认1，最大2（显示到h3标题）
     logo: "/img/logo.png", // 导航栏logo
