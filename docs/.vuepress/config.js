@@ -22,17 +22,17 @@ module.exports = {
       { text: "首页", link: "/" },
       {
         text: "设计基础设施",
-        link: "/pages/3c1db5/",
+        link: "/pages/84cb49/",
       },
       {
         text: "设计热门应用",
-        link: "/pages/6e86ba/",
+        link: "/pages/a95d7d/",
       },
       {
         text: "场景设计",
-        link: "/pages/a027c2/",
+        link: "/pages/def08a/",
       },
-      { text: "系统设计算法", link: "/pages/73ef48/" },
+      { text: "系统设计算法", link: "/pages/fccd91/" },
       { text: "问答归档", link: "/pages/92b2ee/" },
       { text: "网站动态", link: "/pages/9b3c80/" },
     ],
