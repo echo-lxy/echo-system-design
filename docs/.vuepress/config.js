@@ -101,6 +101,14 @@ module.exports = {
 
   // 插件
   plugins: [
+    //禁止复制过多字符
+    [
+      "copyright",
+      {
+        noCopy: true, // the selected text will be uncopiable
+        minLength: 100, // if its length is greater than 100
+      },
+    ],
     // [require('./plugins/love-me'), { // 鼠标点击爱心特效
     //   color: '#11a8cd', // 爱心颜色，默认随机色
     //   excludeClassName: 'theme-vdoing-content' // 要排除元素的class, 默认空''
