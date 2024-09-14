@@ -67,7 +67,7 @@ module.exports = {
 
     author: {
       // 文章默认的作者信息，可在md文件中单独配置此信息 String | {name: String, href: String}
-      name: "李新洋", // 必需
+      name: "echo", // 必需
       href: "https://gitee.com/brother-one", // 可选的
     },
     social: {
@@ -92,10 +92,9 @@ module.exports = {
       ],
     },
     footer: {
-      themeByInfo: "lxy",
       // 页脚信息
       createYear: 2024, // 博客创建年份
-      copyrightInfo: "echo Li | MIT License", // 博客版权信息，支持a标签
+      copyrightInfo: "Xinyang Li | MIT License", // 博客版权信息，支持a标签
     },
     htmlModules,
   },
