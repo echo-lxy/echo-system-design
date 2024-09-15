@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Redis 伪码蓝图【必看】 | Echo 系统设计之美</title>
+    <meta name="generator" content="VuePress 1.9.9">
+    <link rel="icon" href="/img/favicon.ico">
+    <meta name="description" content="水滴石穿，设计无银弹">
+    <meta name="theme-color" content="#11a8cd">
+    
+    <link rel="preload" href="/assets/css/0.styles.3b389ff4.css" as="style"><link rel="preload" href="/assets/js/app.76686be1.js" as="script"><link rel="preload" href="/assets/js/2.c1dbdf51.js" as="script"><link rel="preload" href="/assets/js/7.a5188780.js" as="script"><link rel="prefetch" href="/assets/js/10.10fbde85.js"><link rel="prefetch" href="/assets/js/11.b33c93e4.js"><link rel="prefetch" href="/assets/js/12.43c13c45.js"><link rel="prefetch" href="/assets/js/13.fd93b5b6.js"><link rel="prefetch" href="/assets/js/14.53007c40.js"><link rel="prefetch" href="/assets/js/15.7bbd4adc.js"><link rel="prefetch" href="/assets/js/16.32169b6f.js"><link rel="prefetch" href="/assets/js/17.982723e5.js"><link rel="prefetch" href="/assets/js/18.478766d0.js"><link rel="prefetch" href="/assets/js/19.e61bd683.js"><link rel="prefetch" href="/assets/js/20.2edd9dd4.js"><link rel="prefetch" href="/assets/js/21.18ac7a9f.js"><link rel="prefetch" href="/assets/js/22.da09a8c5.js"><link rel="prefetch" href="/assets/js/23.98a929d8.js"><link rel="prefetch" href="/assets/js/24.9f385414.js"><link rel="prefetch" href="/assets/js/25.59f60868.js"><link rel="prefetch" href="/assets/js/26.a1f04b2c.js"><link rel="prefetch" href="/assets/js/27.7572bfb0.js"><link rel="prefetch" href="/assets/js/28.275c0034.js"><link rel="prefetch" href="/assets/js/29.1049b897.js"><link rel="prefetch" href="/assets/js/3.912e9d73.js"><link rel="prefetch" href="/assets/js/30.22890f37.js"><link rel="prefetch" href="/assets/js/31.9908ee5a.js"><link rel="prefetch" href="/assets/js/32.e0ffc5a6.js"><link rel="prefetch" href="/assets/js/33.e20d06c9.js"><link rel="prefetch" href="/assets/js/34.30b95393.js"><link rel="prefetch" href="/assets/js/35.fc0499cb.js"><link rel="prefetch" href="/assets/js/36.5ee50d37.js"><link rel="prefetch" href="/assets/js/37.4f08d1ce.js"><link rel="prefetch" href="/assets/js/38.15961422.js"><link rel="prefetch" href="/assets/js/39.d12b1e9c.js"><link rel="prefetch" href="/assets/js/4.d8b1ff7a.js"><link rel="prefetch" href="/assets/js/40.58ecc22c.js"><link rel="prefetch" href="/assets/js/41.f38dd0f4.js"><link rel="prefetch" href="/assets/js/42.6da51736.js"><link rel="prefetch" href="/assets/js/43.dcc33323.js"><link rel="prefetch" href="/assets/js/44.2b4befca.js"><link rel="prefetch" href="/assets/js/45.6bc53f3a.js"><link rel="prefetch" href="/assets/js/46.1d0973a8.js"><link rel="prefetch" href="/assets/js/47.66a7556c.js"><link rel="prefetch" href="/assets/js/48.8181e75b.js"><link rel="prefetch" href="/assets/js/49.00d01621.js"><link rel="prefetch" href="/assets/js/5.39afb5af.js"><link rel="prefetch" href="/assets/js/50.b794e175.js"><link rel="prefetch" href="/assets/js/51.bbe138fe.js"><link rel="prefetch" href="/assets/js/52.c40cf6c8.js"><link rel="prefetch" href="/assets/js/6.7a2f25e5.js"><link rel="prefetch" href="/assets/js/8.54ee266d.js"><link rel="prefetch" href="/assets/js/9.eb6c3ac8.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.3b389ff4.css">
+  </head>
+  <body class="theme-mode-light">
+    <div id="app" data-server-rendered="true"><div class="theme-container sidebar-open"><header class="navbar blur"><div title="目录" class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><img src="/img/logo.png" alt="Echo 系统设计之美" class="logo"> <span class="site-name can-hide">Echo 系统设计之美</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/" class="nav-link">🏠首页</a></div><div class="nav-item"><a href="/pages/fccd91/" class="nav-link">✒️热门算法</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="🎖️赏析经典" class="dropdown-title"><!----> <span class="title" style="display:;">🎖️赏析经典</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/pages/252196/" class="nav-link">Redis 系统设计</a></li><li class="dropdown-item"><!----> <a href="/pages/b9733b/" class="nav-link">Kafka 系统设计</a></li><li class="dropdown-item"><!----> <a href="/pages/4601ca/" class="nav-link">Nginx 系统设计</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="🧑‍💻实战系统设计" class="dropdown-title"><!----> <span class="title" style="display:;">🧑‍💻实战系统设计</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/pages/84cb49/" class="nav-link">设计基础设施</a></li><li class="dropdown-item"><!----> <a href="/pages/a95d7d/" class="nav-link">设计热门应用</a></li><li class="dropdown-item"><!----> <a href="/pages/def08a/" class="nav-link">场景设计</a></li></ul></div></div><div class="nav-item"><a href="/pages/92b2ee/" class="nav-link">❓问答</a></div><div class="nav-item"><a href="/pages/52ebd8/" class="nav-link">👀动态</a></div> <a href="https://github.com/echo-lxy/echo-system-design" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav></div></header> <div class="sidebar-mask"></div> <div class="sidebar-hover-trigger"></div> <aside class="sidebar" style="display:none;"><!----> <nav class="nav-links"><div class="nav-item"><a href="/" class="nav-link">🏠首页</a></div><div class="nav-item"><a href="/pages/fccd91/" class="nav-link">✒️热门算法</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="🎖️赏析经典" class="dropdown-title"><!----> <span class="title" style="display:;">🎖️赏析经典</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/pages/252196/" class="nav-link">Redis 系统设计</a></li><li class="dropdown-item"><!----> <a href="/pages/b9733b/" class="nav-link">Kafka 系统设计</a></li><li class="dropdown-item"><!----> <a href="/pages/4601ca/" class="nav-link">Nginx 系统设计</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="🧑‍💻实战系统设计" class="dropdown-title"><!----> <span class="title" style="display:;">🧑‍💻实战系统设计</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/pages/84cb49/" class="nav-link">设计基础设施</a></li><li class="dropdown-item"><!----> <a href="/pages/a95d7d/" class="nav-link">设计热门应用</a></li><li class="dropdown-item"><!----> <a href="/pages/def08a/" class="nav-link">场景设计</a></li></ul></div></div><div class="nav-item"><a href="/pages/92b2ee/" class="nav-link">❓问答</a></div><div class="nav-item"><a href="/pages/52ebd8/" class="nav-link">👀动态</a></div> <a href="https://github.com/echo-lxy/echo-system-design" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav>  <ul class="sidebar-links"><li><section class="sidebar-group depth-0"><p class="sidebar-heading open"><span>指南</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/pages/252196/" class="sidebar-link">介绍</a></li><li><a href="/pages/69fbd7/" aria-current="page" class="active sidebar-link">Redis 伪码蓝图【必看】</a></li></ul></section></li><li><section class="sidebar-group depth-0"><p class="sidebar-heading"><span>基础</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/pages/bdae41/" class="sidebar-link">数据类型xxxx</a></li></ul></section></li><li><section class="sidebar-group depth-0"><p class="sidebar-heading"><span>主线</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/pages/d4ecb9/" class="sidebar-link">Redis Server 初始化</a></li><li><a href="/pages/34fa27/" class="sidebar-link">Linux 中的 IO 多路复用</a></li><li><a href="/pages/d6b00d/" class="sidebar-link">Redis 的 Reactor 模型</a></li><li><a href="/pages/264b06/" class="sidebar-link">深入 Redis 事件驱动框架</a></li><li><a href="/pages/e6d8ef/" class="sidebar-link">Redis 的执行模式</a></li></ul></section></li><li><section class="sidebar-group depth-0"><p class="sidebar-heading"><span>支线</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/pages/b43a49/" class="sidebar-link">Redis 淘汰策略</a></li><li><a href="/pages/b43a19/" class="sidebar-link">LRU 策略</a></li><li><a href="/pages/b43a89/" class="sidebar-link">LFU 策略</a></li><li><a href="/pages/f44fbe/" class="sidebar-link">Redis 过期策略</a></li><li><a href="/pages/9b17a6/" class="sidebar-link">持久化 RDB、AOF</a></li><li><a href="/pages/aa75e9/" class="sidebar-link">Redis 中的延迟监控</a></li><li><a href="/pages/ebc8dc/" class="sidebar-link">主从复制</a></li><li><a href="/pages/af8752/" class="sidebar-link">哨兵</a></li><li><a href="/pages/040403/" class="sidebar-link">cluster</a></li></ul></section></li></ul> </aside> <div><main class="page"><div class="theme-vdoing-wrapper "><div class="articleInfo-wrap" data-v-06225672><div class="articleInfo" data-v-06225672><ul class="breadcrumbs" data-v-06225672><li data-v-06225672><a href="/" title="首页" class="iconfont icon-home router-link-active" data-v-06225672></a></li> <li data-v-06225672><span data-v-06225672>Redis 系统设计</span></li><li data-v-06225672><span data-v-06225672>指南</span></li></ul> <div class="info" data-v-06225672><div title="作者" class="author iconfont icon-touxiang" data-v-06225672><a href="https://gitee.com/brother-one" target="_blank" title="作者" class="beLink" data-v-06225672>echo</a></div> <div title="创建时间" class="date iconfont icon-riqi" data-v-06225672><a href="javascript:;" data-v-06225672>2024-09-16</a></div> <!----></div></div></div> <!----> <div class="content-wrapper"><!----> <h1><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAABH1JREFUSA3tVl1oHFUUPmdmd2ltklqbpJDiNnXFmgbFktho7YMPNiJSSZM0+CAYSkUELVhM6YuwIPpgoOKDqOBDC0XE2CQoNtQXBUFTTcCi+Wlh1V2TQExsUzcltd3M9Tt3ZjZzZ2fT+OJTL8yeM+eee757fmeJbq//KQL8X3DUSFOcfr7cRsRtxNQMWueeVzOkaITIGqQHNg5y8+jNW9ldM7A6nTpAjuolUikAwq7CE3WcM2RRDz+XGVgN3FptU/aUSlvq9Pa3iZ1+sgAqJyyAFqkipd9dqiwHF3P65YycLWc/6sqGrvoEoIp6DOFaX5h6+dnfjkWprwqsPk0dUGq5vySwDImC10KxFHgGL1SWoc92O3eVht09qdXNH11I2SsTsJYqMWzihqGMi+A+Garf3BAuuLI5oGlULyNfyB/HYNujwktOfRrMr5t77NmevqaUopx0grnKAyvVpmwUDB4x6FPXuGvYLTDwWsejwgtgkYKPqRJg8SV6xaiZ3ZTppGneS4yfH5/66fZSDHv+QZci/+h5c5UHtpy67JUqGppM0sh0Nc1dW6/N1W5Yoqat8/TU/VnadmdeW2PLLSyh0cvxBs3KbqTmwYPpxN4do/mzE8nEpvX/UMu2Wbp74zUAK5q6WkHns7V0eWkdPbPzd3rxkTGybadYySumVzhcaJFbs5UrEkQ/+CK8gF5dnh/6ciIZ73gwQ927L1IitoxKLXYP3SjYdOrHHfTZhRRlFyrorafPk20B3HPD1y2G3qKZME5Jcf3t/HUC13/8tSd++vqFveMUTwAUxSUFI1QekR1+bIze3D9MF2aq6cPvG72CgnldWCFqyRw3lwH8ZMerjTD9ElRO7Gv44wNpC90aASqGfVlz/Rx17srQ57/UU26hkhQqUB7dBR71WmzQhHUnblGmVOEw0jhbV1n9OlXUDCIRGaNV5Jp43N516fN7JmnTHdfp7Hgy0luO4aMhtkLL8Bi3bUWYvzh5Mn1dTxrL6QmGuRhGL/TiTTxRoEdTszSaq9GR0NGA3KdkOz3hqSV3MIDhQ5IVX/Ivx3umBti2es2h4eZby7x8br1rkf7Mo90AqC8aQ3sJeNzqFRu+vSANAQe3PL7l0HGOAdwDCeZYvNKeoZp1Qfs6Aipndh86HmFRi0LAnEO47wsqM6cdfjh3jBPUzhZy7nvlUfFsamED1VQt6aISHVymXZ/B2aCtIG8AI8xfobj2d3en1wWVhOeHELKmLQ1s211s88comkv4UCwWyF787mJdYXtNfhKAXVqnKTq8QZvGAGGOfaTo5pGZ/PwbUCr5+DPr/1J92JNHr9aOl/F3iI5+O1nfybsGxoimvZ3ViWSluDITw3P37mypheDIPY0tw7+O/5ApbkYw+zpfaUVu32Pi98+defdUhEpZkRFq0aqyNh9FuL9hpYbEm6iwi0z2REd09ZmyENEbuhjDWzKvZXTqKYaBIr3tt5kuPtQBZFvEUwHt60vfCNu41XsksH9Ij1BMMz1Y0OOunHNShFIP5868g5zeXmuLwL9T4b6Q2+KejgAAAABJRU5ErkJggg==">Redis 伪码蓝图【必看】<!----></h1> <div class="page-slot page-slot-top">
+    <div class="wwads-cn wwads-horizontal page-wwads" data-id="136"></div>
+    <style>
+      .page-wwads{
+        width:100%!important;
+        min-height: 0;
+        margin: 0;
+      }
+      .page-wwads .wwads-img img{
+        width:80px!important;
+      }
+      .page-wwads .wwads-poweredby{
+        width: 40px;
+        position: absolute;
+        right: 25px;
+        bottom: 3px;
+      }
+      .wwads-content .wwads-text, .page-wwads .wwads-text{
+        height: 100%;
+        padding-top: 5px;
+        display: block;
+      }
+  </style>
+  </div> <div class="theme-vdoing-content content__default"><p><strong>请点击下方窗口右下角进行全屏预览</strong></p> <iframe src="https://www.processon.com/view/link/66e727e56de05763d582ed93?cid=6556eaa66c98d6411d14edeb" width="100%" height="500" frameborder="0" scrolling="On" leftmargin="0" topmargin="0" allowfullscreen="allowfullscreen"></iframe> <div class="language-c extra-class"><pre class="language-c"><code><span class="token macro property"><span class="token directive-hash">#</span> <span class="token expression">Redis 启动流程</span></span>
+function <span class="token function">startRedis</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span>
+    # <span class="token number">1.</span> Redis Server 初始化
+    <span class="token function">loadConfig</span><span class="token punctuation">(</span><span class="token punctuation">)</span>                         # 加载 redis<span class="token punctuation">.</span>conf 配置文件
+    <span class="token function">createServerSocket</span><span class="token punctuation">(</span><span class="token punctuation">)</span>                 # 创建 TCP 监听端口，准备接受客户端连接
+    <span class="token function">initEventLoop</span><span class="token punctuation">(</span><span class="token punctuation">)</span>                      # 初始化事件循环（epoll<span class="token operator">/</span>kqueue）
+
+    # 初始化支线功能
+    <span class="token function">initPersistence</span><span class="token punctuation">(</span><span class="token punctuation">)</span>                    # 初始化 RDB 和 AOF 持久化
+    <span class="token function">initReplication</span><span class="token punctuation">(</span><span class="token punctuation">)</span>                    # 初始化主从复制机制
+    <span class="token function">initSentinel</span><span class="token punctuation">(</span><span class="token punctuation">)</span>                       # 如果是哨兵模式，初始化哨兵机制
+    <span class="token function">initCluster</span><span class="token punctuation">(</span><span class="token punctuation">)</span>                        # 如果是集群模式，初始化集群路由和分片
+
+    # 启动主事件循环
+    <span class="token function">eventLoop</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+# 事件循环，负责处理所有事件
+function <span class="token function">eventLoop</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span>
+    <span class="token keyword">while</span> server is running<span class="token operator">:</span>
+        <span class="token function">processTimers</span><span class="token punctuation">(</span><span class="token punctuation">)</span>                  # 处理定时任务（如过期 key、AOF 持久化等）
+        <span class="token function">acceptClientConnections</span><span class="token punctuation">(</span><span class="token punctuation">)</span>        # 接受新的客户端连接
+        <span class="token function">processClientRequests</span><span class="token punctuation">(</span><span class="token punctuation">)</span>          # 处理客户端命令请求
+        <span class="token function">handleReplication</span><span class="token punctuation">(</span><span class="token punctuation">)</span>              # 处理主从复制数据同步
+        <span class="token function">handleSentinel</span><span class="token punctuation">(</span><span class="token punctuation">)</span>                 # 处理哨兵监控和故障切换
+        <span class="token function">handleCluster</span><span class="token punctuation">(</span><span class="token punctuation">)</span>                  # 集群模式下，处理分片路由和数据迁移
+
+# 处理定时任务，如过期 key、持久化
+function <span class="token function">processTimers</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span>
+    <span class="token function">expireKeysIfNeeded</span><span class="token punctuation">(</span><span class="token punctuation">)</span>                 # 检查并删除过期的键
+    <span class="token function">handleAOFAndRDBPersistence</span><span class="token punctuation">(</span><span class="token punctuation">)</span>         # 根据策略触发 AOF 和 RDB 持久化
+    <span class="token function">evictKeysIfNeeded</span><span class="token punctuation">(</span><span class="token punctuation">)</span>                  # 如果内存超出上限，触发淘汰策略
+
+# 处理新客户端连接
+function <span class="token function">acceptClientConnections</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span>
+    when new client connects<span class="token operator">:</span>
+        client <span class="token operator">=</span> <span class="token function">createClient</span><span class="token punctuation">(</span><span class="token punctuation">)</span>          # 创建客户端对象
+        <span class="token function">registerReadEvent</span><span class="token punctuation">(</span>client<span class="token punctuation">)</span>        # 注册读事件，监听客户端请求
+
+# 处理客户端命令请求
+function <span class="token function">processClientRequests</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span>
+    <span class="token keyword">for</span> each client in server<span class="token punctuation">.</span>clients<span class="token operator">:</span>
+        <span class="token keyword">if</span> client has data to read<span class="token operator">:</span>
+            <span class="token function">readDataFromClient</span><span class="token punctuation">(</span>client<span class="token punctuation">)</span>   # 从 socket 中读取请求数据
+            <span class="token keyword">if</span> data is valid<span class="token operator">:</span>
+                command <span class="token operator">=</span> <span class="token function">parseCommand</span><span class="token punctuation">(</span>client<span class="token punctuation">)</span>  # 解析 Redis 命令
+                <span class="token function">executeCommand</span><span class="token punctuation">(</span>client<span class="token punctuation">,</span> command<span class="token punctuation">)</span> # 执行命令
+
+# 执行 Redis 命令
+function <span class="token function">executeCommand</span><span class="token punctuation">(</span>client<span class="token punctuation">,</span> command<span class="token punctuation">)</span><span class="token operator">:</span>
+    <span class="token keyword">if</span> command is valid<span class="token operator">:</span>
+        cmdFunction <span class="token operator">=</span> <span class="token function">lookupCommand</span><span class="token punctuation">(</span>command<span class="token punctuation">)</span>  # 查找命令函数
+        result <span class="token operator">=</span> <span class="token function">cmdFunction</span><span class="token punctuation">(</span>client<span class="token punctuation">)</span>          # 执行命令
+        <span class="token function">addToClientOutputBuffer</span><span class="token punctuation">(</span>client<span class="token punctuation">,</span> result<span class="token punctuation">)</span> # 将结果写入输出缓冲区
+        <span class="token function">replicateCommandToSlaves</span><span class="token punctuation">(</span>command<span class="token punctuation">)</span>     # 同步命令到从服务器（主从复制）
+
+        # 在命令执行过程中，可能触发支线操作
+        <span class="token function">checkKeyExpiration</span><span class="token punctuation">(</span>client<span class="token punctuation">,</span> command<span class="token punctuation">)</span>  # 检查 key 是否过期，进行惰性删除
+        <span class="token function">handlePersistence</span><span class="token punctuation">(</span>command<span class="token punctuation">)</span>           # 根据配置，触发 AOF 或 RDB 持久化
+        <span class="token function">evictKeysIfNeeded</span><span class="token punctuation">(</span><span class="token punctuation">)</span>                  # 当内存不足时，触发淘汰策略
+
+    <span class="token keyword">else</span><span class="token operator">:</span>
+        <span class="token function">sendError</span><span class="token punctuation">(</span>client<span class="token punctuation">,</span> <span class="token string">&quot;Invalid command&quot;</span><span class="token punctuation">)</span> # 返回错误消息
+
+# 返回响应给客户端
+function <span class="token function">addToClientOutputBuffer</span><span class="token punctuation">(</span>client<span class="token punctuation">,</span> result<span class="token punctuation">)</span><span class="token operator">:</span>
+    client<span class="token punctuation">.</span>outputBuffer<span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span>result<span class="token punctuation">)</span>       # 将命令执行结果添加到输出缓冲区
+    <span class="token function">registerWriteEvent</span><span class="token punctuation">(</span>client<span class="token punctuation">)</span>               # 注册写事件，准备发送给客户端
+
+# 发送响应
+function <span class="token function">sendResponseToClient</span><span class="token punctuation">(</span>client<span class="token punctuation">)</span><span class="token operator">:</span>
+    <span class="token function">writeDataToSocket</span><span class="token punctuation">(</span>client<span class="token punctuation">,</span> client<span class="token punctuation">.</span>outputBuffer<span class="token punctuation">)</span>  # 将数据发送给客户端
+    <span class="token keyword">if</span> write success<span class="token operator">:</span>
+        <span class="token function">clearClientOutputBuffer</span><span class="token punctuation">(</span>client<span class="token punctuation">)</span>      # 清空缓冲区
+    <span class="token keyword">else</span><span class="token operator">:</span>
+        <span class="token function">handleSocketError</span><span class="token punctuation">(</span>client<span class="token punctuation">)</span>            # 处理 socket 错误
+
+# 支线：检查 key 过期，过期策略
+function <span class="token function">checkKeyExpiration</span><span class="token punctuation">(</span>client<span class="token punctuation">,</span> command<span class="token punctuation">)</span><span class="token operator">:</span>
+    key <span class="token operator">=</span> <span class="token function">getKeyFromCommand</span><span class="token punctuation">(</span>command<span class="token punctuation">)</span>
+    <span class="token keyword">if</span> <span class="token function">isKeyExpired</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token operator">:</span>
+        <span class="token function">deleteKey</span><span class="token punctuation">(</span>client<span class="token punctuation">.</span>db<span class="token punctuation">,</span> key<span class="token punctuation">)</span>            # 惰性删除过期的 key
+
+function <span class="token function">expireKeysIfNeeded</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span>
+    <span class="token keyword">for</span> each db in server<span class="token punctuation">.</span>databases<span class="token operator">:</span>
+        <span class="token keyword">for</span> each key in db<span class="token punctuation">.</span>keys<span class="token operator">:</span>
+            <span class="token keyword">if</span> <span class="token function">isKeyExpired</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token operator">:</span>
+                <span class="token function">deleteKey</span><span class="token punctuation">(</span>db<span class="token punctuation">,</span> key<span class="token punctuation">)</span>           # 主动删除过期的 key
+
+# 支线：持久化，处理 RDB 和 AOF 逻辑
+function <span class="token function">handlePersistence</span><span class="token punctuation">(</span>command<span class="token punctuation">)</span><span class="token operator">:</span>
+    <span class="token keyword">if</span> AOF is enabled<span class="token operator">:</span>
+        <span class="token function">writeCommandToAOF</span><span class="token punctuation">(</span>command<span class="token punctuation">)</span>           # 将命令写入 AOF 文件
+    <span class="token keyword">if</span> RDB snapshot is needed<span class="token operator">:</span>
+        <span class="token function">saveRDBSnapshot</span><span class="token punctuation">(</span><span class="token punctuation">)</span>                    # 触发 RDB 快照生成
+
+function <span class="token function">handleAOFAndRDBPersistence</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span>
+    <span class="token keyword">if</span> <span class="token function">timeToSaveRDB</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span>
+        <span class="token function">saveRDB</span><span class="token punctuation">(</span><span class="token punctuation">)</span>                            # 持久化 RDB 快照
+    <span class="token keyword">if</span> <span class="token function">timeToRewriteAOF</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span>
+        <span class="token function">rewriteAOF</span><span class="token punctuation">(</span><span class="token punctuation">)</span>                         # 触发 AOF 重写以压缩日志
+
+# 支线：淘汰策略，LRU、LFU
+function <span class="token function">evictKeysIfNeeded</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span>
+    <span class="token keyword">while</span> <span class="token function">memoryUsageExceedsLimit</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span>
+        candidates <span class="token operator">=</span> <span class="token function">sampleKeys</span><span class="token punctuation">(</span><span class="token punctuation">)</span>            # 随机采样 key
+        keyToEvict <span class="token operator">=</span> <span class="token function">findLRUOrLFUKey</span><span class="token punctuation">(</span>candidates<span class="token punctuation">)</span> # 根据 LRU<span class="token operator">/</span>LFU 策略选择淘汰 key
+        <span class="token function">deleteKey</span><span class="token punctuation">(</span>db<span class="token punctuation">,</span> keyToEvict<span class="token punctuation">)</span>            # 删除 key 以释放内存
+
+# 支线：主从复制，主服务器将命令同步给从服务器
+function <span class="token function">replicateCommandToSlaves</span><span class="token punctuation">(</span>command<span class="token punctuation">)</span><span class="token operator">:</span>
+    <span class="token keyword">if</span> server<span class="token punctuation">.</span><span class="token function">isMaster</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span>
+        <span class="token keyword">for</span> each slave in server<span class="token punctuation">.</span>slaves<span class="token operator">:</span>
+            <span class="token function">sendCommandToSlave</span><span class="token punctuation">(</span>slave<span class="token punctuation">,</span> command<span class="token punctuation">)</span>  # 复制命令到从服务器
+
+function <span class="token function">handleReplication</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span>
+    <span class="token keyword">if</span> server<span class="token punctuation">.</span><span class="token function">isMaster</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span>
+        <span class="token function">sendReplicationDataToSlaves</span><span class="token punctuation">(</span><span class="token punctuation">)</span>          # 主服务器向从服务器同步数据
+    <span class="token keyword">if</span> server<span class="token punctuation">.</span><span class="token function">isSlave</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span>
+        <span class="token function">syncWithMaster</span><span class="token punctuation">(</span><span class="token punctuation">)</span>                       # 从服务器与主服务器同步数据
+
+# 支线：哨兵监控与故障转移
+function <span class="token function">handleSentinel</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span>
+    <span class="token keyword">if</span> server<span class="token punctuation">.</span><span class="token function">isSentinel</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span>
+        <span class="token function">monitorMasterStatus</span><span class="token punctuation">(</span><span class="token punctuation">)</span>                  # 哨兵模式，监控主服务器状态
+        <span class="token keyword">if</span> <span class="token function">masterIsDown</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span>
+            <span class="token function">performFailover</span><span class="token punctuation">(</span><span class="token punctuation">)</span>                  # 主服务器故障时，触发故障转移
+
+function <span class="token function">performFailover</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span>
+    newMaster <span class="token operator">=</span> <span class="token function">selectNewMaster</span><span class="token punctuation">(</span><span class="token punctuation">)</span>              # 选举新的主服务器
+    <span class="token function">promoteSlaveToMaster</span><span class="token punctuation">(</span>newMaster<span class="token punctuation">)</span>            # 提升从服务器为主服务器
+    <span class="token function">notifyOtherSlavesAndClients</span><span class="token punctuation">(</span>newMaster<span class="token punctuation">)</span>     # 通知其他从服务器和客户端
+
+# 支线：集群模式下的分片与数据路由
+function <span class="token function">handleCluster</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span>
+    <span class="token keyword">if</span> server<span class="token punctuation">.</span><span class="token function">isCluster</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span>
+        <span class="token keyword">for</span> each command in client<span class="token punctuation">.</span>commands<span class="token operator">:</span>
+            keyHashSlot <span class="token operator">=</span> <span class="token function">computeKeyHashSlot</span><span class="token punctuation">(</span>command<span class="token punctuation">.</span>key<span class="token punctuation">)</span> # 计算 key 的哈希槽
+            <span class="token keyword">if</span> <span class="token function">hashSlotIsLocal</span><span class="token punctuation">(</span>keyHashSlot<span class="token punctuation">)</span><span class="token operator">:</span>
+                <span class="token function">executeCommandLocally</span><span class="token punctuation">(</span>command<span class="token punctuation">)</span>   # 如果哈希槽属于本节点，执行命令
+            <span class="token keyword">else</span><span class="token operator">:</span>
+                <span class="token function">forwardCommandToCorrectNode</span><span class="token punctuation">(</span>command<span class="token punctuation">)</span> # 将命令转发到正确的节点
+
+function <span class="token function">migrateKeysDuringRebalance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span>
+    <span class="token keyword">if</span> <span class="token function">clusterNeedsRebalancing</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span>
+        <span class="token keyword">for</span> each slot in migratingSlots<span class="token operator">:</span>
+            <span class="token function">migrateKeys</span><span class="token punctuation">(</span>slot<span class="token punctuation">,</span> targetNode<span class="token punctuation">)</span>      # 将哈希槽的数据迁移到目标节点
+
+</code></pre></div></div></div>  <div class="page-edit"><div class="edit-link"><a href="https://github.com/echo-lxy/echo-system-design/edit/master/docs/01.Redis 系统设计/01.指南/05.Redis 伪码蓝图【必看】.md" target="_blank" rel="noopener noreferrer">编辑</a> <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></div> <!----> <div class="last-updated"><span class="prefix">上次更新:</span> <span class="time">2024/09/15, 19:31:25</span></div></div> <div class="page-nav-wapper"><!----> <div class="page-nav"><p class="inner"><span class="prev">
+        ←
+        <a href="/pages/252196/" class="prev">介绍</a></span> <span class="next"><a href="/pages/bdae41/">数据类型xxxx</a>→
+      </span></p></div></div></div> <!----></main></div> <div class="footer"><div class="icons"><a href="mailto:lixinyang2002@163.com" title="发邮件" target="_blank" class="iconfont icon-youjian"></a><a href="https://github.com/echo-lxy" title="GitHub" target="_blank" class="iconfont icon-github"></a><a href="https://music.163.com/#/playlist?id=755597173" title="听音乐" target="_blank" class="iconfont icon-erji"></a></div> 
+  Theme by
+  <a href="https://github.com/xugaoyi/vuepress-theme-vdoing" target="_blank" title="本站主题">Vdoing</a> 
+    | Copyright © 2024-2024
+    <span>Xinyang Li | MIT License</span></div> <div class="buttons"><div title="返回顶部" class="button blur go-to-top iconfont icon-fanhuidingbu" style="display:none;"></div> <div title="去评论" class="button blur go-to-comment iconfont icon-pinglun" style="display:none;"></div> <div title="主题模式" class="button blur theme-mode-but iconfont icon-zhuti"><ul class="select-box" style="display:none;"><li class="iconfont icon-zidong">
+          跟随系统
+        </li><li class="iconfont icon-rijianmoshi">
+          浅色模式
+        </li><li class="iconfont icon-yejianmoshi">
+          深色模式
+        </li><li class="iconfont icon-yuedu">
+          阅读模式
+        </li></ul></div></div> <!----> <!----> <!----></div><div class="global-ui"></div></div>
+    <script src="/assets/js/app.76686be1.js" defer></script><script src="/assets/js/2.c1dbdf51.js" defer></script><script src="/assets/js/7.a5188780.js" defer></script>
+  </body>
+</html>
