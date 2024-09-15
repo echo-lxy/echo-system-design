@@ -20,7 +20,7 @@ module.exports = {
     pageButton: false,
     nav: [
       { text: "首页", link: "/" },
-      { text: "路书", link: "/pages/e6dc90/" },
+      { text: "学习路线", link: "/pages/bd2edd/" },
       { text: "系统设计算法", link: "/pages/fccd91/" },
       {
         text: "设计基础设施",
