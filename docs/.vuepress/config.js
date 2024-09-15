@@ -6,6 +6,7 @@ module.exports = {
   // theme: require.resolve('../../vdoing'), // 使用本地主题 (先将vdoing主题文件下载到本地：https://github.com/xugaoyi/vuepress-theme-vdoing)
   // base: "/echo-system-design/",自定义域名的时候就不需要
   title: "Echo 系统设计之美",
+
   description: "将系统设计技能提升到一个新水平所需的一切",
   // base: '/', // 默认'/'。如果你想将你的网站部署到如 https://foo.github.io/bar/，那么 base 应该被设置成 "/bar/",（否则页面将失去样式等文件）
   head: [
@@ -17,26 +18,34 @@ module.exports = {
 
   // 主题配置
   themeConfig: {
+    mode: "structuring",
+    collapsable: Boolean,
     pageButton: false,
     nav: [
       { text: "首页", link: "/" },
-      { text: "学习路线", link: "/pages/bd2edd/" },
-      { text: "系统设计算法", link: "/pages/fccd91/" },
-      {
-        text: "设计基础设施",
-        link: "/pages/84cb49/",
-      },
+      { text: "系统设计概述", link: "/pages/bd2edd/" },
+      { text: "经典设计算法", link: "/pages/fccd91/" },
       {
         text: "系统设计鉴赏",
         link: "/pages/264b06/",
       },
       {
-        text: "设计热门应用",
-        link: "/pages/a95d7d/",
-      },
-      {
-        text: "经典场景设计",
-        link: "/pages/def08a/",
+        text: "设计实战",
+        link: "/pages/84cb49/",
+        children: [
+          {
+            text: "设计基础设施",
+            link: "/pages/84cb49/",
+          },
+          {
+            text: "设计热门应用",
+            link: "/pages/a95d7d/",
+          },
+          {
+            text: "经典场景设计",
+            link: "/pages/def08a/",
+          },
+        ],
       },
       { text: "问答归档", link: "/pages/92b2ee/" },
       { text: "我的动态", link: "/pages/52ebd8/" },
