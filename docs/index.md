@@ -71,7 +71,7 @@ postList: none
     text-transform: none;
     -webkit-text-fill-color: transparent;
     background: var(--gradient-purple-magenta);
-    --gradient-purple-magenta: linear-gradient(128.87deg,#0056d6 14.05%,#f5a632 89.3%);
+    --gradient-purple-magenta: linear-gradient(128.87deg,#0056d6 14.05%,#f5a632 80.3%);
     background-clip: text;
     -webkit-background-clip: text;
     margin-bottom: 36px;
