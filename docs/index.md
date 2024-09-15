@@ -1,7 +1,7 @@
 ---
 home: true
 title: 首页
-heroImage: /img/hero.png
+heroImage: https://echo798.oss-cn-shenzhen.aliyuncs.com/img/202409152149836.png
 heroText: Echo 系统设计之美
 tagline: 🚀水滴石穿，设计无银弹
 actionText: 开始使用 →
@@ -19,6 +19,48 @@ features:
 # 文章列表显示方式: detailed 默认，显示详细版文章列表（包括作者、分类、标签、摘要、分页等）| simple => 显示简约版文章列表（仅标题和日期）| none 不显示文章列表
 postList: none
 ---
+
+## ⚡ 反馈与交流
+
+在使用过程中有任何问题和想法，请给我提 [Issue](https://github.com/echo-lxy/echo-system-design)。
+你也可以在 Issue 查看别人提的问题和给出解决方案。
+
+或者加入我们的交流群：参与贡献可以榜上留名 💯
+
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="middle">
+        <img src="https://echo798.oss-cn-shenzhen.aliyuncs.com/img/202409152148916.jpg" class="no-zoom" style="width:120px;margin: 10px;">
+        <p>「Echo 系统设计之美」微信群(添加我微信备注"进群系统设计")</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- AD -->
+<!-- <div class="wwads-cn wwads-horizontal page-wwads" data-id="136"></div> -->
+<style>
+  .page-wwads{
+    width:100%!important;
+    min-height: 0;
+    margin: 0;
+  }
+  .page-wwads .wwads-img img{
+    width:80px!important;
+  }
+  .page-wwads .wwads-poweredby{
+    width: 40px;
+    position: absolute;
+    right: 25px;
+    bottom: 3px;
+  }
+  .wwads-content .wwads-text, .page-wwads .wwads-text{
+    height: 100%;
+    padding-top: 5px;
+    display: block;
+  }
+</style>
 
 <style>
 .home-wrapper .banner .banner-conent .hero h1 {
