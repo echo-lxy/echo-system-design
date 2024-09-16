@@ -18,6 +18,16 @@ module.exports = {
 
   // 主题配置
   themeConfig: {
+    smoothScroll: true,
+    lastUpdated: "上次更新于",
+    category: false,
+    tag: false,
+    archive: false,
+    titleBadge: false,
+    updateBar: {
+      // 最近更新栏
+      showToArticle: false,
+    },
     mode: "structuring",
     collapsable: Boolean,
     pageButton: false,
