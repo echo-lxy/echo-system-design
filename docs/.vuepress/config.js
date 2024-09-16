@@ -18,18 +18,6 @@ module.exports = {
 
   // 主题配置
   themeConfig: {
-    smoothScroll: true,
-    lastUpdated: "上次更新于",
-    category: false,
-    tag: false,
-    archive: false,
-    titleBadge: false,
-    updateBar: {
-      // 最近更新栏
-      showToArticle: false,
-    },
-    mode: "structuring",
-    collapsable: Boolean,
     pageButton: false,
     nav: [
       { text: "🏠首页", link: "/" },
@@ -72,18 +60,18 @@ module.exports = {
       { text: "❓问答", link: "/pages/92b2ee/" },
       { text: "👀动态", link: "/pages/52ebd8/" },
     ],
-    sidebarDepth: 2, // 侧边栏显示深度，默认1，最大2（显示到h3标题）
+    // sidebarDepth: 2, // 侧边栏显示深度，默认1，最大2（显示到h3标题）
     logo: "/img/logo.png", // 导航栏logo
     repo: "echo-lxy/echo-system-design", // 导航栏右侧生成Github链接
     searchMaxSuggestions: 10, // 搜索结果显示最大数
-    lastUpdated: "上次更新", // 更新的时间，及前缀文字   string | boolean (取值为git提交时间)
+    lastUpdated: "上次更新于", // 更新的时间，及前缀文字   string | boolean (取值为git提交时间)
 
     docsDir: "docs", // 编辑的文件夹
     editLinks: true, // 编辑链接
     editLinkText: "编辑",
 
     // 以下配置是Vdoing主题改动的和新增的配置
-    sidebar: { mode: "structuring", collapsable: false }, // 侧边栏  'structuring' | { mode: 'structuring', collapsable: Boolean} | 'auto' | 自定义    温馨提示：目录页数据依赖于结构化的侧边栏数据，如果你不设置为'structuring',将无法使用目录页
+    sidebar: { mode: "structuring", collapsable: true }, // 侧边栏  'structuring' | { mode: 'structuring', collapsable: Boolean} | 'auto' | 自定义    温馨提示：目录页数据依赖于结构化的侧边栏数据，如果你不设置为'structuring',将无法使用目录页
 
     // sidebarOpen: false, // 初始状态是否打开侧边栏，默认true
     updateBar: {
