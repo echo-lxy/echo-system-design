@@ -3,7 +3,7 @@ home: true
 title: Echo 系统设计
 heroImage: https://echo798.oss-cn-shenzhen.aliyuncs.com/img/202409152149836.png
 heroText: EchoDesign
-tagline: 🚀系统设计的「教学 + 面试指南」传播系统设计之美
+tagline: 🚀系统设计之「讲解 + 面试指南」，水滴石穿，设计无银弹！
 actionText: 开始使用 →
 actionLink: /pages/fccd91/
 bannerBg: none # auto => 网格纹背景(有bodyBgImg时无背景)，默认 | none => 无 | '大图地址' | background: 自定义背景样式       提示：如发现文本颜色不适应你的背景时可以到palette.styl修改$bannerTextColor变量
@@ -31,7 +31,7 @@ postList: none
     <tr>
       <td align="center" valign="middle">
         <img src="https://echo798.oss-cn-shenzhen.aliyuncs.com/img/202409152148916.jpg" class="no-zoom" style="width:120px;margin: 10px;">
-        <p>「Echo 系统设计之美」微信群(添加我微信备注"进群系统设计")</p>
+        <p>「EchoDesign」微信群(添加我微信备注"进群系统设计")</p>
       </td>
     </tr>
   </tbody>
@@ -71,7 +71,7 @@ postList: none
     text-transform: none;
     -webkit-text-fill-color: transparent;
     background: var(--gradient-purple-magenta);
-    --gradient-purple-magenta: linear-gradient(128.87deg,#0056d6 14.05%,#f5a632 80.3%);
+    --gradient-purple-magenta: linear-gradient(128.87deg,#0056d6 14.05%,#f5a632 75.3%);
     background-clip: text;
     -webkit-background-clip: text;
     margin-bottom: 36px;

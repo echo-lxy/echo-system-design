@@ -12,7 +12,7 @@ module.exports = {
   // base: "/echo-system-design/",自定义域名的时候就不需要
   title: "EchoDesign",
 
-  description: "系统设计之「教学 + 面试指南」传播系统设计之美",
+  description: "系统设计之「讲解 + 面试指南」",
   // base: '/', // 默认'/'。如果你想将你的网站部署到如 https://foo.github.io/bar/，那么 base 应该被设置成 "/bar/",（否则页面将失去样式等文件）
   head: [
     // 注入到页面<head> 中的标签，格式[tagName, { attrName: attrValue }, innerHTML?]
