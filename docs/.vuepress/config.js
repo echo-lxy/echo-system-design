@@ -12,7 +12,7 @@ module.exports = {
   // base: "/echo-system-design/",自定义域名的时候就不需要
   title: "EchoDesign",
 
-  description: "系统设计之「讲解 + 面试指南」",
+  description: "系统设计之「讲解 + 面试指南」，水滴石穿，设计无银弹！",
   // base: '/', // 默认'/'。如果你想将你的网站部署到如 https://foo.github.io/bar/，那么 base 应该被设置成 "/bar/",（否则页面将失去样式等文件）
   head: [
     // 注入到页面<head> 中的标签，格式[tagName, { attrName: attrValue }, innerHTML?]
@@ -52,6 +52,10 @@ module.exports = {
           {
             text: "Kafka 系统设计",
             link: "/pages/b9733b/",
+          },
+          {
+            text: "Netty 系统设计",
+            link: "/pages/bfab10/",
           },
           {
             text: "Nginx 系统设计",
