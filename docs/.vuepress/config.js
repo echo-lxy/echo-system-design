@@ -10,9 +10,9 @@ module.exports = {
   theme: "vdoing", // 使用依赖包主题
   // theme: require.resolve('../../vdoing'), // 使用本地主题 (先将vdoing主题文件下载到本地：https://github.com/xugaoyi/vuepress-theme-vdoing)
   // base: "/echo-system-design/",自定义域名的时候就不需要
-  title: "EchoDesign「系统设计之美」",
+  title: "EchoDesign",
 
-  description: "水滴石穿，设计无银弹",
+  description: "系统设计之「教学 + 面试指南」传播系统设计之美",
   // base: '/', // 默认'/'。如果你想将你的网站部署到如 https://foo.github.io/bar/，那么 base 应该被设置成 "/bar/",（否则页面将失去样式等文件）
   head: [
     // 注入到页面<head> 中的标签，格式[tagName, { attrName: attrValue }, innerHTML?]
@@ -26,7 +26,7 @@ module.exports = {
     // 站点配置（首页 & 文章页）
     blogInfo: {
       blogCreate: "2024-09-10", // 博客创建时间
-      // indexView: true, // 开启首页的访问量和排名统计，默认 true（开启）
+      indexView: false, // 开启首页的访问量和排名统计，默认 true（开启）
       pageView: false, // 开启文章页的浏览量统计，默认 true（开启）
       readingTime: true, // 开启文章页的预计阅读时间，条件：开启 eachFileWords，默认 true（开启）。可在 eachFileWords 的 readEachFileWords 的第二个和第三个参数自定义，默认 1 分钟 300 中文、160 英文
       eachFileWords: readEachFileWords([""], 300, 160), // 开启每个文章页的字数。readEachFileWords(['xx']) 关闭 xx 目录（可多个，可不传参数）下的文章页字数和阅读时长，后面两个参数分别是 1 分钟里能阅读的中文字数和英文字数。无默认值。readEachFileWords() 方法默认排除了 article 为 false 的文章
