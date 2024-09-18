@@ -61,21 +61,7 @@ module.exports = {
       },
       {
         text: "🧑‍💻实战系统设计",
-        // link: "/pages/84cb49/",
-        items: [
-          {
-            text: "设计基础设施",
-            link: "/pages/84cb49/",
-          },
-          {
-            text: "设计热门应用",
-            link: "/pages/a95d7d/",
-          },
-          {
-            text: "场景设计",
-            link: "/pages/def08a/",
-          },
-        ],
+        link: "/pages/84cb49/",
       },
       { text: "❓问答", link: "/pages/92b2ee/" },
       { text: "👀动态", link: "/pages/52ebd8/" },
