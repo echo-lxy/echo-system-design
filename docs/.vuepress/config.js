@@ -13,7 +13,7 @@ module.exports = {
   title: "EchoDesign",
 
   description: "系统设计之「讲解 + 面试指南」，水滴石穿，设计无银弹！",
-  base: "/echo-system-design/", // 默认'/'。如果你想将你的网站部署到如 https://foo.github.io/bar/，那么 base 应该被设置成 "/bar/",（否则页面将失去样式等文件）
+  // base: "/echo-system-design/", // 默认'/'。如果你想将你的网站部署到如 https://foo.github.io/bar/，那么 base 应该被设置成 "/bar/",（否则页面将失去样式等文件）
   head: [
     // 注入到页面<head> 中的标签，格式[tagName, { attrName: attrValue }, innerHTML?]
     ["link", { rel: "icon", href: "/img/favicon.ico" }], //favicons，资源放在public文件夹
