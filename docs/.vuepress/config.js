@@ -23,6 +23,7 @@ module.exports = {
 
   // 主题配置
   themeConfig: {
+    titleBadge: false,
     rightMenuBar: true,
     // 站点配置（首页 & 文章页）
     blogInfo: {
@@ -47,16 +48,20 @@ module.exports = {
         text: "🎖️赏析经典设计",
         items: [
           {
+            text: "JUC 系统设计",
+            link: "/pages/252196/",
+          },
+          {
+            text: "Netty 系统设计",
+            link: "/pages/bfab10/",
+          },
+          {
             text: "Redis 系统设计",
             link: "/pages/252196/",
           },
           {
             text: "Kafka 系统设计",
             link: "/pages/b9733b/",
-          },
-          {
-            text: "Netty 系统设计",
-            link: "/pages/bfab10/",
           },
           {
             text: "Nginx 系统设计",
