@@ -46,19 +46,19 @@ module.exports = {
         text: "🎖️赏析经典设计",
         items: [
           {
-            text: "Redis 深度剖析",
+            text: "Redis 系统设计",
             link: "/pages/252196/",
           },
           {
-            text: "Kafka 深度剖析",
+            text: "Kafka 系统设计",
             link: "/pages/b9733b/",
           },
           {
-            text: "Netty 深度剖析",
+            text: "Netty 系统设计",
             link: "/pages/bfab10/",
           },
           {
-            text: "Nginx 深度剖析",
+            text: "Nginx 系统设计",
             link: "/pages/4601ca/",
           },
         ],
