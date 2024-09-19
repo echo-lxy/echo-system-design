@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>第四课：Netty 如何高效接收网络连接 | EchoDesign</title>
+    <meta name="generator" content="VuePress 1.9.9">
+    <link rel="icon" href="/img/favicon.ico">
+    <meta name="description" content="系统设计之「讲解 + 面试指南」，水滴石穿，设计无银弹！">
+    <meta name="theme-color" content="#11a8cd">
+    
+    <link rel="preload" href="/assets/css/0.styles.c76c3453.css" as="style"><link rel="preload" href="/assets/js/app.6c7acbd0.js" as="script"><link rel="preload" href="/assets/js/2.933750c6.js" as="script"><link rel="preload" href="/assets/js/54.0bbf2ba5.js" as="script"><link rel="preload" href="/assets/js/7.7eb70372.js" as="script"><link rel="prefetch" href="/assets/js/10.2cc95be8.js"><link rel="prefetch" href="/assets/js/100.2b21dce5.js"><link rel="prefetch" href="/assets/js/101.09d5e594.js"><link rel="prefetch" href="/assets/js/11.c7521a10.js"><link rel="prefetch" href="/assets/js/12.38d1989d.js"><link rel="prefetch" href="/assets/js/13.8ddd597e.js"><link rel="prefetch" href="/assets/js/14.397b7600.js"><link rel="prefetch" href="/assets/js/15.b3c76984.js"><link rel="prefetch" href="/assets/js/16.831e5a24.js"><link rel="prefetch" href="/assets/js/17.acb3bf3d.js"><link rel="prefetch" href="/assets/js/18.e491edb6.js"><link rel="prefetch" href="/assets/js/19.daf31819.js"><link rel="prefetch" href="/assets/js/20.cb4a5c13.js"><link rel="prefetch" href="/assets/js/21.24c0f101.js"><link rel="prefetch" href="/assets/js/22.7d106f59.js"><link rel="prefetch" href="/assets/js/23.623f0b5d.js"><link rel="prefetch" href="/assets/js/24.6ba53300.js"><link rel="prefetch" href="/assets/js/25.1fb855d9.js"><link rel="prefetch" href="/assets/js/26.0146252c.js"><link rel="prefetch" href="/assets/js/27.de80589e.js"><link rel="prefetch" href="/assets/js/28.d4ca2c30.js"><link rel="prefetch" href="/assets/js/29.7325b5ce.js"><link rel="prefetch" href="/assets/js/3.5c09ac9d.js"><link rel="prefetch" href="/assets/js/30.892b2994.js"><link rel="prefetch" href="/assets/js/31.a532917f.js"><link rel="prefetch" href="/assets/js/32.13b70e91.js"><link rel="prefetch" href="/assets/js/33.64ab8d0c.js"><link rel="prefetch" href="/assets/js/34.6d3cc288.js"><link rel="prefetch" href="/assets/js/35.5b49d706.js"><link rel="prefetch" href="/assets/js/36.be98cc35.js"><link rel="prefetch" href="/assets/js/37.ead210df.js"><link rel="prefetch" href="/assets/js/38.9f396b5a.js"><link rel="prefetch" href="/assets/js/39.8409097b.js"><link rel="prefetch" href="/assets/js/4.73518a0f.js"><link rel="prefetch" href="/assets/js/40.0ada49bd.js"><link rel="prefetch" href="/assets/js/41.fcee3e0f.js"><link rel="prefetch" href="/assets/js/42.b34f1599.js"><link rel="prefetch" href="/assets/js/43.5a509601.js"><link rel="prefetch" href="/assets/js/44.64fd3383.js"><link rel="prefetch" href="/assets/js/45.685623ac.js"><link rel="prefetch" href="/assets/js/46.7624d38c.js"><link rel="prefetch" href="/assets/js/47.86be3d8d.js"><link rel="prefetch" href="/assets/js/48.ba7dfd47.js"><link rel="prefetch" href="/assets/js/49.ee9681bc.js"><link rel="prefetch" href="/assets/js/5.94727770.js"><link rel="prefetch" href="/assets/js/50.3e91aa07.js"><link rel="prefetch" href="/assets/js/51.ad7a3e32.js"><link rel="prefetch" href="/assets/js/52.08ad747c.js"><link rel="prefetch" href="/assets/js/53.5ee4652a.js"><link rel="prefetch" href="/assets/js/55.0edcba5d.js"><link rel="prefetch" href="/assets/js/56.5ecf867d.js"><link rel="prefetch" href="/assets/js/57.72ba41a6.js"><link rel="prefetch" href="/assets/js/58.7144aef6.js"><link rel="prefetch" href="/assets/js/59.f96f0065.js"><link rel="prefetch" href="/assets/js/6.0b558b79.js"><link rel="prefetch" href="/assets/js/60.66a7f41d.js"><link rel="prefetch" href="/assets/js/61.08b4acf0.js"><link rel="prefetch" href="/assets/js/62.cc8fdced.js"><link rel="prefetch" href="/assets/js/63.41ff19e4.js"><link rel="prefetch" href="/assets/js/64.9b3def35.js"><link rel="prefetch" href="/assets/js/65.0b2ab47d.js"><link rel="prefetch" href="/assets/js/66.2ae7a107.js"><link rel="prefetch" href="/assets/js/67.79dd6daf.js"><link rel="prefetch" href="/assets/js/68.1b76c178.js"><link rel="prefetch" href="/assets/js/69.7ac52a2f.js"><link rel="prefetch" href="/assets/js/70.7279b1df.js"><link rel="prefetch" href="/assets/js/71.f44644ed.js"><link rel="prefetch" href="/assets/js/72.c8cf2fab.js"><link rel="prefetch" href="/assets/js/73.526febf1.js"><link rel="prefetch" href="/assets/js/74.d9ad1a67.js"><link rel="prefetch" href="/assets/js/75.90fd56c9.js"><link rel="prefetch" href="/assets/js/76.32858593.js"><link rel="prefetch" href="/assets/js/77.7b3f6980.js"><link rel="prefetch" href="/assets/js/78.31a353ef.js"><link rel="prefetch" href="/assets/js/79.173bbc8c.js"><link rel="prefetch" href="/assets/js/8.0ec7f6e8.js"><link rel="prefetch" href="/assets/js/80.d8713e74.js"><link rel="prefetch" href="/assets/js/81.d124398a.js"><link rel="prefetch" href="/assets/js/82.3b90a7cc.js"><link rel="prefetch" href="/assets/js/83.f3a9ee0c.js"><link rel="prefetch" href="/assets/js/84.1fd412a9.js"><link rel="prefetch" href="/assets/js/85.f69467b2.js"><link rel="prefetch" href="/assets/js/86.931cbb70.js"><link rel="prefetch" href="/assets/js/87.78b2eebd.js"><link rel="prefetch" href="/assets/js/88.605444aa.js"><link rel="prefetch" href="/assets/js/89.e05e3a70.js"><link rel="prefetch" href="/assets/js/9.6e274fca.js"><link rel="prefetch" href="/assets/js/90.ca1ff100.js"><link rel="prefetch" href="/assets/js/91.8ad18b18.js"><link rel="prefetch" href="/assets/js/92.b554f1c7.js"><link rel="prefetch" href="/assets/js/93.fb2397b7.js"><link rel="prefetch" href="/assets/js/94.1eade7f0.js"><link rel="prefetch" href="/assets/js/95.96f5db04.js"><link rel="prefetch" href="/assets/js/96.5ed2d348.js"><link rel="prefetch" href="/assets/js/97.0154143f.js"><link rel="prefetch" href="/assets/js/98.8d8d41db.js"><link rel="prefetch" href="/assets/js/99.690e4395.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.c76c3453.css">
+  </head>
+  <body class="theme-mode-light">
+    <div id="app" data-server-rendered="true"><div class="theme-container sidebar-open have-rightmenu"><header class="navbar blur"><div title="目录" class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><img src="/img/logo.png" alt="EchoDesign" class="logo"> <span class="site-name can-hide">EchoDesign</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/" class="nav-link">🏠首页</a></div><div class="nav-item"><a href="/pages/fccd91/" class="nav-link">✒️热门算法</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="🎖️赏析经典设计" class="dropdown-title"><!----> <span class="title" style="display:;">🎖️赏析经典设计</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/pages/252196/" class="nav-link">Redis 系统设计</a></li><li class="dropdown-item"><!----> <a href="/pages/b9733b/" class="nav-link">Kafka 系统设计</a></li><li class="dropdown-item"><!----> <a href="/pages/bfab10/" class="nav-link">Netty 系统设计</a></li><li class="dropdown-item"><!----> <a href="/pages/4601ca/" class="nav-link">Nginx 系统设计</a></li></ul></div></div><div class="nav-item"><a href="/pages/84cb49/" class="nav-link">🧑‍💻实战系统设计</a></div><div class="nav-item"><a href="/pages/92b2ee/" class="nav-link">❓问答</a></div><div class="nav-item"><a href="/pages/52ebd8/" class="nav-link">👀动态</a></div> <a href="https://github.com/echo-lxy/echo-system-design" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav></div></header> <div class="sidebar-mask"></div> <div class="sidebar-hover-trigger"></div> <aside class="sidebar" style="display:none;"><!----> <nav class="nav-links"><div class="nav-item"><a href="/" class="nav-link">🏠首页</a></div><div class="nav-item"><a href="/pages/fccd91/" class="nav-link">✒️热门算法</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="🎖️赏析经典设计" class="dropdown-title"><!----> <span class="title" style="display:;">🎖️赏析经典设计</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/pages/252196/" class="nav-link">Redis 系统设计</a></li><li class="dropdown-item"><!----> <a href="/pages/b9733b/" class="nav-link">Kafka 系统设计</a></li><li class="dropdown-item"><!----> <a href="/pages/bfab10/" class="nav-link">Netty 系统设计</a></li><li class="dropdown-item"><!----> <a href="/pages/4601ca/" class="nav-link">Nginx 系统设计</a></li></ul></div></div><div class="nav-item"><a href="/pages/84cb49/" class="nav-link">🧑‍💻实战系统设计</a></div><div class="nav-item"><a href="/pages/92b2ee/" class="nav-link">❓问答</a></div><div class="nav-item"><a href="/pages/52ebd8/" class="nav-link">👀动态</a></div> <a href="https://github.com/echo-lxy/echo-system-design" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav>  <ul class="sidebar-links"><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>一、前言</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>二、基础知识</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>三、主线任务</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>四、深入 Netty 核心</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/pages/c3d4a6/" class="sidebar-link">第一课：透过 Netty 看 IO 模型</a></li><li><a href="/pages/70bb50/" class="sidebar-link">第二课：Reactor在Netty中的实现</a></li><li><a href="/pages/830f05/" class="sidebar-link">第三课：Netty核心引擎Reactor的运转架构</a></li><li><a href="/pages/6d0640/" aria-current="page" class="active sidebar-link">第四课：Netty 如何高效接收网络连接</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header level2"><a href="/pages/6d0640/#前文回顾" class="sidebar-link">前文回顾</a></li><li class="sidebar-sub-header level2"><a href="/pages/6d0640/#_1-main-reactor处理op-accept事件" class="sidebar-link">1. Main Reactor处理OP_ACCEPT事件</a></li><li class="sidebar-sub-header level2"><a href="/pages/6d0640/#_2-接收客户端连接核心流程框架总览" class="sidebar-link">2. 接收客户端连接核心流程框架总览</a></li><li class="sidebar-sub-header level2"><a href="/pages/6d0640/#_3-recvbytebufallocator简介" class="sidebar-link">3. RecvByteBufAllocator简介</a></li><li class="sidebar-sub-header level2"><a href="/pages/6d0640/#_4-啊哈-bug" class="sidebar-link">4. 啊哈！！Bug ! !</a></li><li class="sidebar-sub-header level2"><a href="/pages/6d0640/#_5-doreadmessages接收客户端连接" class="sidebar-link">5. doReadMessages接收客户端连接</a></li><li class="sidebar-sub-header level2"><a href="/pages/6d0640/#_6-channelread事件的响应" class="sidebar-link">6. ChannelRead事件的响应</a></li><li class="sidebar-sub-header level2"><a href="/pages/6d0640/#_7-向subreactorgroup中注册niosocketchannel" class="sidebar-link">7. 向SubReactorGroup中注册NioSocketChannel</a></li><li class="sidebar-sub-header level2"><a href="/pages/6d0640/#总结" class="sidebar-link">总结</a></li></ul></li><li><a href="/pages/9cb8c1/" class="sidebar-link">第五课：Netty 如何高效接收网络数据</a></li><li><a href="/pages/cfe9ff/" class="sidebar-link">第六课：Netty 如何高效发送网络数据.md</a></li><li><a href="/pages/ed2e85/" class="sidebar-link">第七课：详解 Netty 中所有IO事件的触发时机和传播流程</a></li></ul></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>五、深入 Netty 内存管理</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <div><main class="page"><div class="theme-vdoing-wrapper "><div class="articleInfo-wrap" data-v-06225672><div class="articleInfo" data-v-06225672><ul class="breadcrumbs" data-v-06225672><li data-v-06225672><a href="/" title="首页" class="iconfont icon-home router-link-active" data-v-06225672></a></li> <li data-v-06225672><span data-v-06225672>Netty 系统设计</span></li><li data-v-06225672><span data-v-06225672>四、深入 Netty 核心</span></li></ul> <div class="info" data-v-06225672><div title="作者" class="author iconfont icon-touxiang" data-v-06225672><a href="https://gitee.com/brother-one" target="_blank" title="作者" class="beLink" data-v-06225672>echo</a></div> <div title="创建时间" class="date iconfont icon-riqi" data-v-06225672><a href="javascript:;" data-v-06225672>2024-09-19</a></div> <!----></div></div></div> <!----> <div class="content-wrapper"><div class="right-menu-wrapper"><div class="right-menu-margin"><div class="right-menu-title">目录</div> <div class="right-menu-content"></div></div></div> <h1><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAABGpJREFUSA3tVVtoXFUU3fvOI53UlmCaKIFmwEhsE7QK0ipFEdHEKpXaZGrp15SINsXUWvBDpBgQRKi0+KKoFeJHfZA+ED9KKoIU2gYD9UejTW4rVIzm0VSTziPzuNu1z507dibTTjL4U/DAzLn3nL3X2o91ziX6f9wMFdh6Jvbm9nNSV0msViVO6tN1Rm7NMu2OpeJ9lWBUTDxrJbYTS0hInuwciu9eLHlFxCLCZEk3MegsJmZ5K/JD6t7FkFdEvGUo1g7qJoG3MHImqRIn8/nzY1K9UPKKiJmtnUqHVE3Gbuay6vJE/N2FEmuxFjW2nUuE0yQXRRxLiTUAzs36zhZvOXJPdX850EVnnLZkB8prodQoM5JGj7Xk2mvC7JB8tG04Ef5PiXtG0UtxupRQSfTnBoCy554x18yJHI6I+G5Eru4LHmPJZEQsrvPUbMiA8G/WgMK7w7I+ez7++o2ANfbrjvaOl1tFMs+htG3IrZH9/hDX1Pr8Tc0UvH8tcX29KzAgIGcEkINyW5BF9x891hw6VYqgJHEk0huccS7vh3C6gTiODL+26huuBtbct8eZnqLML8PkxGYpuPZBqtqwkSjgc4mB5gbgig5i+y0UDK35LMxXisn9xQtK+nd26gTIHsHe/oblK/b29fUmN/8Y+9jAQrnBp56m1LcDlDp9irKTExSKduXJVWSqdBMA08pEJnEIOB3FPPMybu/oeV8zFeYN3xx576Q6RH+VmplE4ncQV5v+5rzSoyOU7PuEAg8g803PwBJ0CExno/jcMbN8tONYeOmHiuUNryvm3fRUy4tMPVLdAGkUhNWuggGrJcXPv+ouCjz0MKUHz1J2/E8IC9nqTabcxgaBYM0hPhD5Y65FsbxRQKxCQrDjDctW7PUM3HuZunFyifSAqEfuzCp48Il24luWUWZoyJCaPR82jE0+kFA643wRFVni4RYSq3ohJO2pZ7B5dO4xkDWbEpossJPLSrPjYID8rS2UHTlvyNxqIGsg674XJJ7vnh5L7PNwC4hh2sjCI96mzszOTpxLF0T7l88Yz7lAuK6OnL8gXLOnTvpzSb22YG8W7us3jSebFHeeqnXRG1vt+MoUM84LQIBmMsCTAcOauTh0T0l0neQK7m2bLMt2mGxU3HYssS0J2cdv5wljlPsrIuZLAG/2DOZIXgCYT8uMGZN+e2kSirfxZOPCsC0f24nTZzspnVn9VePS1Z5vubmAGGXG8ZFno9Hel0yfA5ZPhF7Dh972BQJ2qCpgH67lmWtBYbvk6sz02wjky2vXyz0XErP/kFB619js1BtwfOV4OPRqOQBjy3Qbk18vigUPPSD5ceHnwck7W9bhAqZdd7SuG7w4/P2F/GaJh8c7e9qgow+Q7cGBo+98WsLkuktFqiZabtXuQTu/Y5ETbR0v7tNSFnvrmu6pjdoan2KjMu8q/Hmj1EfCO2ZGfEIbIXKUlw8qaX9/b2oeSJmFksSeT/Fn0V3nSypChh4Gjh74ybO9aeZ/AN2dwciu2/MhAAAAAElFTkSuQmCC">第四课：Netty 如何高效接收网络连接<!----></h1> <div class="page-slot page-slot-top">
+    <div class="wwads-cn wwads-horizontal page-wwads" data-id="136"></div>
+    <style>
+      .page-wwads{
+        width:100%!important;
+        min-height: 0;
+        margin: 0;
+      }
+      .page-wwads .wwads-img img{
+        width:80px!important;
+      }
+      .page-wwads .wwads-poweredby{
+        width: 40px;
+        position: absolute;
+        right: 25px;
+        bottom: 3px;
+      }
+      .wwads-content .wwads-text, .page-wwads .wwads-text{
+        height: 100%;
+        padding-top: 5px;
+        display: block;
+      }
+  </style>
+  </div> <div class="theme-vdoing-content content__default"><p>对于一个高性能网络通讯框架来说，最最重要也是最核心的工作就是如何高效的接收客户端连接，这就好比我们开了一个饭店，那么迎接客人就是饭店最重要的工作，我们要先把客人迎接进来，不能让客人一看人多就走掉，只要客人进来了，哪怕菜做的慢一点也没关系。</p> <p>本文笔者就来为大家介绍下netty这块最核心的内容，看看netty是如何高效的接收客户端连接的。</p> <p>下图为笔者在一个月黑风高天空显得那么深邃遥远的夜晚，闲来无事，于是捧起Netty关于如何接收连接这部分源码细细品读的时候，意外的发现了一个影响Netty接收连接吞吐的一个Bug。</p> <p><img src="https://echo798.oss-cn-shenzhen.aliyuncs.com/img/202409191110731.webp" alt="图片">issue讨论.png</p> <p>于是笔者就在Github提了一个?Issue#11708，阐述了下这个Bug产生的原因以及导致的结果并和Netty的作者一起讨论了下修复措施。如上图所示。</p> <blockquote><p>Issue#11708：https://github.com/netty/netty/issues/11708</p></blockquote> <p>这里先不详细解释这个Issue，也不建议大家现在就打开这个Issue查看，笔者会在本文的介绍中随着源码深入的解读慢慢的为大家一层一层地拨开迷雾。</p> <p>之所以在文章的开头把这个拎出来，笔者是想让大家带着怀疑，审视，欣赏，崇敬，敬畏的态度来一起品读世界顶级程序员编写的代码。由衷的感谢他们在这一领域做出的贡献。</p> <p>好了，问题抛出来后，我们就带着这个疑问来开始本文的内容吧~~~</p> <p><img src="https://echo798.oss-cn-shenzhen.aliyuncs.com/img/202409191110723.webp" alt="图片">文章概要.png</p> <h2 id="前文回顾"><a href="#前文回顾" class="header-anchor">#</a> 前文回顾</h2> <p>按照老规矩，再开始本文的内容之前，我们先来回顾下前边几篇文章的概要内容帮助大家梳理一个框架全貌出来。</p> <blockquote><p>笔者这里再次想和读者朋友们强调的是本文可以独立观看，并不依赖前边系列文章的内容，只是大家如果对相关细节部分感兴趣的话，可以在阅读完本文之后在去回看相关文章。</p></blockquote> <p>在前边的系列文章中，笔者为大家介绍了驱动Netty整个框架运转的核心引擎Reactor的创建，启动，运行的全流程。从现在开始Netty的整个核心框架就开始运转起来开始工作了，本文要介绍的主要内容就是Netty在启动之后要做的第一件事件：监听端口地址，高效接收客户端连接。</p> <p>在<a href="https://mp.weixin.qq.com/s?__biz=Mzg2MzU3Mjc3Ng==&amp;mid=2247483737&amp;idx=1&amp;sn=7ef3afbb54289c6e839eed724bb8a9d6&amp;chksm=ce77c71ef9004e08e3d164561e3a2708fc210c05408fa41f7fe338d8e85f39c1ad57519b614e&amp;scene=21#wechat_redirect" target="_blank" rel="noopener noreferrer">?《聊聊Netty那些事儿之从内核角度看IO模型》<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a>一文中，我们是从整个网络框架的基石IO模型的角度整体阐述了下Netty的IO线程模型。</p> <p>而Netty中的Reactor正是IO线程在Netty中的模型定义。Reactor在Netty中是以Group的形式出现的，分为:</p> <ul><li>主Reactor线程组也就是我们在启动代码中配置的<code>EventLoopGroup bossGroup</code>,main reactor group中的reactor主要负责监听客户端连接事件，高效的处理客户端连接。也是本文我们要介绍的重点。</li> <li>从Reactor线程组也就是我们在启动代码中配置的<code>EventLoopGroup workerGroup</code>，sub reactor group中的reactor主要负责处理客户端连接上的IO事件，以及异步任务的执行。</li></ul> <p>最后我们得出Netty的整个IO模型如下：</p> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNialDtXCOD5vvVGh56FT2yKauwTch6oYbrn1icPuYKaqY8nPibicWv66sQfw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">netty中的reactor.png</p> <p>本文我们讨论的重点就是MainReactorGroup的核心工作上图中所示的步骤1，步骤2，步骤3。</p> <p>在从整体上介绍完Netty的IO模型之后，我们又在<a href="https://mp.weixin.qq.com/s?__biz=Mzg2MzU3Mjc3Ng==&amp;mid=2247483907&amp;idx=1&amp;sn=084c470a8fe6234c2c9461b5f713ff30&amp;chksm=ce77c444f9004d52e7c6244bee83479070effb0bc59236df071f4d62e91e25f01715fca53696&amp;scene=21#wechat_redirect" target="_blank" rel="noopener noreferrer">?《Reactor在Netty中的实现(创建篇)》<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a>中完整的介绍了Netty框架的骨架主从Reactor组的搭建过程，阐述了Reactor是如何被创建出来的，并介绍了它的核心组件如下图所示：</p> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNiaRn9ZX4dJLJdyxSEEXojs5lEmPNiaBfstFOG95KMGibJed4vo3xMhnE6g/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">image.png</p> <ul><li><code>thread</code>即为Reactor中的IO线程，主要负责监听IO事件，处理IO任务，执行异步任务。</li> <li><code>selector</code>则是JDK NIO对操作系统底层IO多路复用技术实现的封装。用于监听IO就绪事件。</li> <li><code>taskQueue</code>用于保存Reactor需要执行的异步任务，这些异步任务可以由用户在业务线程中向Reactor提交，也可以是Netty框架提交的一些自身核心的任务。</li> <li><code>scheduledTaskQueue</code>则是保存Reactor中执行的定时任务。代替了原有的时间轮来执行延时任务。</li> <li><code>tailQueue</code>保存了在Reactor需要执行的一些尾部收尾任务，在普通任务执行完后 Reactor线程会执行尾部任务，比如对Netty 的运行状态做一些统计数据，例如任务循环的耗时、占用物理内存的大小等等</li></ul> <p>在骨架搭建完毕之后，我们随后又在在<a href="https://mp.weixin.qq.com/s?__biz=Mzg2MzU3Mjc3Ng==&amp;mid=2247484005&amp;idx=1&amp;sn=52f51269902a58f40d33208421109bc3&amp;chksm=ce77c422f9004d340e5b385ef6ba24dfba1f802076ace80ad6390e934173a10401e64e13eaeb&amp;scene=21#wechat_redirect" target="_blank" rel="noopener noreferrer">?《详细图解Netty Reactor启动全流程》<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a>》一文中介绍了<strong>本文的主角服务端NioServerSocketChannel的创建，初始化，绑定端口地址，向main reactor注册监听<code>OP_ACCEPT事件</code>的完整过程</strong>。</p> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNiaMNnpeQav9HykpMEYenDPdshUtLBMicYHd5F9HwloOsE6FfLVtGW0XRA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">Reactor启动后的结构.png</p> <p>main reactor如何处理OP_ACCEPT事件将会是本文的主要内容。</p> <p>自此Netty框架的main reactor group已经启动完毕，开始准备监听OP_accept事件，当客户端连接上来之后，OP_ACCEPT事件活跃，main reactor开始处理OP_ACCEPT事件接收客户端连接了。</p> <p>而netty中的IO事件分为：OP_ACCEPT事件，OP_READ事件，OP_WRITE事件和OP_CONNECT事件，netty对于IO事件的监听和处理统一封装在Reactor模型中，这四个IO事件的处理过程也是我们后续文章中要单独拿出来介绍的，本文我们聚焦OP_ACCEPT事件的处理。</p> <p>而为了让大家能够对IO事件的处理有一个完整性的认识，笔者写了<a href="https://mp.weixin.qq.com/s?__biz=Mzg2MzU3Mjc3Ng==&amp;mid=2247484087&amp;idx=1&amp;sn=0c065780e0f05c23c8e6465ede86cba0&amp;chksm=ce77c4f0f9004de63be369a664105708bc5975b52993f4a6df223caed34cc1ef6185a16acd75&amp;token=997171731&amp;lang=zh_CN&amp;scene=21#wechat_redirect" target="_blank" rel="noopener noreferrer">?《一文聊透Netty核心引擎Reactor的运转架构》<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a>这篇文章，在文章中详细介绍了Reactor线程的整体运行框架。</p> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNiavrDh48SPMAM6BFPzvme6iceQT8aibcKY54GLfSOm2F7yCqynlkI9HkOg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">Reactor线程运行时结构.png</p> <p>Reactor线程会在一个死循环中996不停的运转，在循环中会不断的轮询监听Selector上的IO事件，当IO事件活跃后，Reactor从Selector上被唤醒转去执行IO就绪事件的处理，在这个过程中我们引出了上述四种IO事件的处理入口函数。</p> <div class="language- extra-class"><pre class="language-text"><code>    private void processSelectedKey(SelectionKey k, AbstractNioChannel ch) {
+        //获取Channel的底层操作类Unsafe
+        final AbstractNioChannel.NioUnsafe unsafe = ch.unsafe();
+        if (!k.isValid()) {
+            ......如果SelectionKey已经失效则关闭对应的Channel......
+        }
+
+        try {
+            //获取IO就绪事件
+            int readyOps = k.readyOps();
+            //处理Connect事件
+            if ((readyOps &amp; SelectionKey.OP_CONNECT) != 0) {
+                int ops = k.interestOps();
+                //移除对Connect事件的监听，否则Selector会一直通知
+                ops &amp;= ~SelectionKey.OP_CONNECT;
+                k.interestOps(ops);
+                //触发channelActive事件处理Connect事件
+                unsafe.finishConnect();
+            }
+
+            //处理Write事件
+            if ((readyOps &amp; SelectionKey.OP_WRITE) != 0) {
+                ch.unsafe().forceFlush();
+            }
+
+             //处理Read事件或者Accept事件
+            if ((readyOps &amp; (SelectionKey.OP_READ | SelectionKey.OP_ACCEPT)) != 0 || readyOps == 0) {
+                unsafe.read();
+            }
+        } catch (CancelledKeyException ignored) {
+            unsafe.close(unsafe.voidPromise());
+        }
+    }
+</code></pre></div><p>本文笔者将会为大家重点介绍<code>OP_ACCEPT事件</code>的处理入口函数<code>unsafe.read()</code>的整个源码实现。</p> <p>当客户端连接完成三次握手之后，main reactor中的selector产生<code>OP_ACCEPT事件</code>活跃，main reactor随即被唤醒，来到了<code>OP_ACCEPT事件</code>的处理入口函数开始接收客户端连接。</p> <h2 id="_1-main-reactor处理op-accept事件"><a href="#_1-main-reactor处理op-accept事件" class="header-anchor">#</a> 1. Main Reactor处理OP_ACCEPT事件</h2> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNiaWfVAUiaQYd2Sebxwzf9VCWLhcbIISY1nBSug2YiaVEPewXhib8D8EUk2A/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">OP_ACCEPT事件活跃.png</p> <p>当<code>Main Reactor</code>轮询到<code>NioServerSocketChannel</code>上的<code>OP_ACCEPT事件</code>就绪时，Main Reactor线程就会从<code>JDK Selector</code>上的阻塞轮询API<code>selector.select(timeoutMillis)</code>调用中返回。转而去处理<code>NioServerSocketChannel</code>上的<code>OP_ACCEPT事件</code>。</p> <div class="language- extra-class"><pre class="language-text"><code>public final class NioEventLoop extends SingleThreadEventLoop {
+
+    private void processSelectedKey(SelectionKey k, AbstractNioChannel ch) {
+        final AbstractNioChannel.NioUnsafe unsafe = ch.unsafe();
+        ..............省略.................
+
+        try {
+            int readyOps = k.readyOps();
+
+            if ((readyOps &amp; SelectionKey.OP_CONNECT) != 0) {
+               ..............处理OP_CONNECT事件.................
+            }
+
+
+            if ((readyOps &amp; SelectionKey.OP_WRITE) != 0) {
+              ..............处理OP_WRITE事件.................
+            }
+
+
+            if ((readyOps &amp; (SelectionKey.OP_READ | SelectionKey.OP_ACCEPT)) != 0 || readyOps == 0) {
+                //本文重点处理OP_ACCEPT事件
+                unsafe.read();
+            }
+        } catch (CancelledKeyException ignored) {
+            unsafe.close(unsafe.voidPromise());
+        }
+    }
+
+}
+</code></pre></div><ul><li>处理IO就绪事件的入口函数<code>processSelectedKey</code>中的参数<code>AbstractNioChannel ch</code>正是Netty服务端<code>NioServerSocketChannel</code>。因为此时的执行线程为main reactor线程，而main reactor上注册的正是netty服务端NioServerSocketChannel负责监听端口地址，接收客户端连接。</li> <li>通过<code>ch.unsafe()</code>获取到的NioUnsafe操作类正是NioServerSocketChannel中对底层JDK NIO ServerSocketChannel的Unsafe底层操作类。</li></ul> <blockquote><p><code>Unsafe接口</code>是Netty对Channel底层操作行为的封装，比如NioServerSocketChannel的底层Unsafe操作类干的事情就是<code>绑定端口地址</code>，<code>处理OP_ACCEPT事件</code>。</p></blockquote> <p>这里我们看到，Netty将<code>OP_ACCEPT事件</code>处理的入口函数封装在<code>NioServerSocketChannel</code>里的底层操作类Unsafe的<code>read</code>方法中。</p> <p>![图片](data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='1px' height='1px' viewBox='0 0 1 1' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Ctitle%3E%3C/title%3E%3Cg stroke='none' stroke-width='1' fill='none' fill-rule='evenodd' fill-opacity='0'%3E%3Cg transform='translate(-249.000000, -126.000000)' fill='%23FFFFFF'%3E%3Crect x='249' y='126' width='1' height='1'%3E%3C/rect%3E%3C/g%3E%3C/g%3E%3C/svg%3E)image.png</p> <p>而NioServerSocketChannel中的Unsafe操作类实现类型为<code>NioMessageUnsafe</code>定义在上图继承结构中的<code>AbstractNioMessageChannel父类中</code>。</p> <p>下面我们到<code>NioMessageUnsafe#read</code>方法中来看下Netty对<code>OP_ACCPET事件</code>的具体处理过程：</p> <h2 id="_2-接收客户端连接核心流程框架总览"><a href="#_2-接收客户端连接核心流程框架总览" class="header-anchor">#</a> 2. 接收客户端连接核心流程框架总览</h2> <p>我们还是按照老规矩，先从整体上把整个OP_ACCEPT事件的逻辑处理框架提取出来，让大家先总体俯视下流程全貌，然后在针对每个核心点位进行各个击破。</p> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNiaDjWPOibC4yyvicZOQROz0VprRQdxN0scINPgOrCAVGxL1bUoV6ia4YJXQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">接收客户端连接.png</p> <p>main reactor线程是在一个<code>do...while{...}</code>循环read loop中不断的调用JDK NIO <code>serverSocketChannel.accept()</code>方法来接收完成三次握手的客户端连接<code>NioSocketChannel</code>的，并将接收到的客户端连接NioSocketChannel临时保存在<code>List&lt;Object&gt; readBuf</code>集合中，后续会服务端NioServerSocketChannel的pipeline中通过ChannelRead事件来传递，最终会在ServerBootstrapAcceptor这个ChannelHandler中被处理初始化，并将其注册到Sub Reator Group中。</p> <p>这里的read loop循环会被限定只能读取<strong>16次</strong>，当main reactor从NioServerSocketChannel中读取客户端连接NioSocketChannel的次数达到<strong>16次</strong>之后，无论此时是否还有客户端连接都不能在继续读取了。</p> <p>因为我们在<a href="https://mp.weixin.qq.com/s?__biz=Mzg2MzU3Mjc3Ng==&amp;mid=2247484087&amp;idx=1&amp;sn=0c065780e0f05c23c8e6465ede86cba0&amp;chksm=ce77c4f0f9004de63be369a664105708bc5975b52993f4a6df223caed34cc1ef6185a16acd75&amp;token=997171731&amp;lang=zh_CN&amp;scene=21#wechat_redirect" target="_blank" rel="noopener noreferrer">?《一文聊透Netty核心引擎Reactor的运转架构》<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a>一文中提到，netty对reactor线程压榨的比较狠，要干的事情很多，除了要监听轮询IO就绪事件，处理IO就绪事件，还需要执行用户和netty框架本省提交的异步任务和定时任务。</p> <p>所以这里的main reactor线程不能在read loop中无限制的执行下去，因为还需要分配时间去执行异步任务，不能因为无限制的接收客户端连接而耽误了异步任务的执行。所以这里将read loop的循环次数限定为16次。</p> <p>如果main reactor线程在read loop中读取客户端连接NioSocketChannel的次数已经满了16次，即使此时还有客户端连接未接收，那么main reactor线程也不会再去接收了，而是转去执行异步任务，当异步任务执行完毕后，还会在回来执行剩余接收连接的任务。</p> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNiavrDh48SPMAM6BFPzvme6iceQT8aibcKY54GLfSOm2F7yCqynlkI9HkOg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">Reactor线程运行时结构.png</p> <p>main reactor线程退出read loop循环的条件有两个：</p> <ol><li>在限定的16次读取中，已经没有新的客户端连接要接收了。退出循环。</li> <li>从NioServerSocketChannel中读取客户端连接的次数达到了16次，无论此时是否还有客户端连接都需要退出循环。</li></ol> <p>以上就是Netty在接收客户端连接时的整体核心逻辑，下面笔者将这部分逻辑的核心源码实现框架提取出来，方便大家根据上述核心逻辑与源码中的处理模块对应起来，还是那句话，这里只需要总体把握核心处理流程，不需要读懂每一行代码，笔者会在文章的后边分模块来各个击破它们。</p> <div class="language- extra-class"><pre class="language-text"><code>public abstract class AbstractNioMessageChannel extends AbstractNioChannel {
+
+  private final class NioMessageUnsafe extends AbstractNioUnsafe {
+
+        //存放连接建立后，创建的客户端SocketChannel
+        private final List&lt;Object&gt; readBuf = new ArrayList&lt;Object&gt;();
+
+        @Override
+        public void read() {
+            //必须在Main Reactor线程中执行
+            assert eventLoop().inEventLoop();
+            //注意下面的config和pipeline都是服务端ServerSocketChannel中的
+            final ChannelConfig config = config();
+            final ChannelPipeline pipeline = pipeline();
+            //创建接收数据Buffer分配器（用于分配容量大小合适的byteBuffer用来容纳接收数据）
+            //在接收连接的场景中，这里的allocHandle只是用于控制read loop的循环读取创建连接的次数。
+            final RecvByteBufAllocator.Handle allocHandle = unsafe().recvBufAllocHandle();
+            allocHandle.reset(config);
+
+            boolean closed = false;
+            Throwable exception = null;
+            try {
+                try {
+                    do {
+                        //底层调用NioServerSocketChannel-&gt;doReadMessages 创建客户端SocketChannel
+                        int localRead = doReadMessages(readBuf);
+
+                        //已无新的连接可接收则退出read loop
+                        if (localRead == 0) {
+                            break;
+                        }
+                        if (localRead &lt; 0) {
+                            closed = true;
+                            break;
+                        }
+                        //统计在当前事件循环中已经读取到得Message数量（创建连接的个数）
+                        allocHandle.incMessagesRead(localRead);
+                    } while (allocHandle.continueReading());//判断是否已经读满16次
+                } catch (Throwable t) {
+                    exception = t;
+                }
+
+                int size = readBuf.size();
+                for (int i = 0; i &lt; size; i ++) {
+                    readPending = false;
+                    //在NioServerSocketChannel对应的pipeline中传播ChannelRead事件
+                    //初始化客户端SocketChannel，并将其绑定到Sub Reactor线程组中的一个Reactor上
+                    pipeline.fireChannelRead(readBuf.get(i));
+                }
+                //清除本次accept 创建的客户端SocketChannel集合
+                readBuf.clear();
+                allocHandle.readComplete();
+                //触发readComplete事件传播
+                pipeline.fireChannelReadComplete();
+                ....................省略............
+            } finally {
+                ....................省略............
+            }
+        }
+    }
+  }
+}
+</code></pre></div><p>这里首先要通过断言<code>assert eventLoop().inEventLoop()</code>确保处理接收客户端连接的线程必须为Main Reactor 线程。</p> <p>而main reactor中主要注册的是服务端NioServerSocketChannel，主要负责处理<code>OP_ACCEPT事件</code>，所以当前main reactor线程是在NioServerSocketChannel中执行接收连接的工作。</p> <p>所以这里我们通过<code>config()</code>获取到的是NioServerSocketChannel的属性配置类<code>NioServerSocketChannelConfig</code>,它是在Reactor的启动阶段被创建出来的。</p> <div class="language- extra-class"><pre class="language-text"><code>    public NioServerSocketChannel(ServerSocketChannel channel) {
+        //父类AbstractNioChannel中保存JDK NIO原生ServerSocketChannel以及要监听的事件OP_ACCEPT
+        super(null, channel, SelectionKey.OP_ACCEPT);
+        //DefaultChannelConfig中设置用于Channel接收数据用的buffer-&gt;AdaptiveRecvByteBufAllocator
+        config = new NioServerSocketChannelConfig(this, javaChannel().socket());
+    }
+</code></pre></div><p>同理这里通过<code>pipeline()</code>获取到的也是NioServerSocketChannel中的<code>pipeline</code>。它会在NioServerSocketChannel向main reactor注册成功之后被初始化。</p> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNiaLCnvGuX5Vnkyf8vov0T9bwuSrXAQAKQWoCQjzhgBbkfQ52iaDe6282Q/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">ServerChannelPipeline完整结构.png</p> <p>前边提到main reactor线程会被限定只能在read loop中向NioServerSocketChannel读取16次客户端连接，所以在开始read loop之前，我们需要创建一个能够保存记录读取次数的对象，在每次read loop循环之后，可以根据这个对象来判断是否结束read loop。</p> <p>这个对象就是这里的 <code>RecvByteBufAllocator.Handle allocHandle</code>专门用于统计read loop中接收客户端连接的次数，以及判断是否该结束read loop转去执行异步任务。</p> <p>当这一切准备就绪之后，main reactor线程就开始在<code>do{....}while(...)</code>循环中接收客户端连接了。</p> <p>在 read loop中通过调用<code>doReadMessages函数</code>接收完成三次握手的客户端连接，底层会调用到JDK NIO ServerSocketChannel的accept方法，从内核全连接队列中取出客户端连接。</p> <p>返回值<code>localRead</code>表示接收到了多少客户端连接，客户端连接通过accept方法只会一个一个的接收，所以这里的<code>localRead</code>正常情况下都会返回<code>1</code>，当<code>localRead &lt;= 0</code>时意味着已经没有新的客户端连接可以接收了，本次main reactor接收客户端的任务到这里就结束了，跳出read loop。开始新的一轮IO事件的监听处理。</p> <div class="language- extra-class"><pre class="language-text"><code>    public static SocketChannel accept(final ServerSocketChannel serverSocketChannel) throws IOException {
+        try {
+            return AccessController.doPrivileged(new PrivilegedExceptionAction&lt;SocketChannel&gt;() {
+                @Override
+                public SocketChannel run() throws IOException {
+                    return serverSocketChannel.accept();
+                }
+            });
+        } catch (PrivilegedActionException e) {
+            throw (IOException) e.getCause();
+        }
+    }
+</code></pre></div><p>随后会将接收到的客户端连接占时存放到<code>List&lt;Object&gt; readBuf</code>集合中。</p> <div class="language- extra-class"><pre class="language-text"><code>  private final class NioMessageUnsafe extends AbstractNioUnsafe {
+
+        //存放连接建立后，创建的客户端SocketChannel
+        private final List&lt;Object&gt; readBuf = new ArrayList&lt;Object&gt;();
+}
+</code></pre></div><p>调用<code>allocHandle.incMessagesRead</code>统计本次事件循环中接收到的客户端连接个数，最后在read loop末尾通过<code>allocHandle.continueReading</code>判断是否达到了限定的16次。从而决定main reactor线程是继续接收客户端连接还是转去执行异步任务。</p> <p>main reactor线程退出read loop的两个条件：</p> <ol><li>在限定的16次读取中，已经没有新的客户端连接要接收了。退出循环。</li> <li>从NioServerSocketChannel中读取客户端连接的次数达到了16次，无论此时是否还有客户端连接都需要退出循环。</li></ol> <p>当满足以上两个退出条件时，main reactor线程就会退出read loop，由于在read loop中接收到的客户端连接全部暂存在<code>List&lt;Object&gt; readBuf</code>集合中,随后开始遍历readBuf，在NioServerSocketChannel的pipeline中传播ChannelRead事件。</p> <div class="language- extra-class"><pre class="language-text"><code>                int size = readBuf.size();
+                for (int i = 0; i &lt; size; i ++) {
+                    readPending = false;
+                    //NioServerSocketChannel对应的pipeline中传播read事件
+                    //io.netty.bootstrap.ServerBootstrap.ServerBootstrapAcceptor.channelRead
+                    //初始化客户端SocketChannel，并将其绑定到Sub Reactor线程组中的一个Reactor上
+                    pipeline.fireChannelRead(readBuf.get(i));
+                }
+</code></pre></div><p>最终pipeline中的ChannelHandler(ServerBootstrapAcceptor)会响应ChannelRead事件，并在相应回调函数中初始化客户端NioSocketChannel，并将其注册到Sub Reactor Group中。此后客户端NioSocketChannel绑定到的sub reactor就开始监听处理客户端连接上的读写事件了。</p> <p>Netty整个接收客户端的逻辑过程如下图步骤1，2，3所示。</p> <p>![图片](data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='1px' height='1px' viewBox='0 0 1 1' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Ctitle%3E%3C/title%3E%3Cg stroke='none' stroke-width='1' fill='none' fill-rule='evenodd' fill-opacity='0'%3E%3Cg transform='translate(-249.000000, -126.000000)' fill='%23FFFFFF'%3E%3Crect x='249' y='126' width='1' height='1'%3E%3C/rect%3E%3C/g%3E%3C/g%3E%3C/svg%3E)netty中的reactor.png</p> <p>以上内容就是笔者提取出来的整体流程框架，下面我们来将其中涉及到的重要核心模块拆开，一个一个详细解读下。</p> <h2 id="_3-recvbytebufallocator简介"><a href="#_3-recvbytebufallocator简介" class="header-anchor">#</a> 3. RecvByteBufAllocator简介</h2> <p>Reactor在处理对应Channel上的IO数据时，都会采用一个<code>ByteBuffer</code>来接收Channel上的IO数据。而本小节要介绍的RecvByteBufAllocator正是用来分配ByteBuffer的一个分配器。</p> <p>还记得这个<code>RecvByteBufAllocator</code>在哪里被创建的吗？？</p> <p>在<a href="https://mp.weixin.qq.com/s?__biz=Mzg2MzU3Mjc3Ng==&amp;mid=2247483907&amp;idx=1&amp;sn=084c470a8fe6234c2c9461b5f713ff30&amp;chksm=ce77c444f9004d52e7c6244bee83479070effb0bc59236df071f4d62e91e25f01715fca53696&amp;scene=21#wechat_redirect" target="_blank" rel="noopener noreferrer">?《聊聊Netty那些事儿之Reactor在Netty中的实现(创建篇)》<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a>一文中，在介绍<code>NioServerSocketChannel</code>的创建过程中提到，对应Channel的配置类NioServerSocketChannelConfig也会随着NioServerSocketChannel的创建而创建。</p> <div class="language- extra-class"><pre class="language-text"><code>    public NioServerSocketChannel(ServerSocketChannel channel) {
+        super(null, channel, SelectionKey.OP_ACCEPT);
+        config = new NioServerSocketChannelConfig(this, javaChannel().socket());
+    }
+</code></pre></div><p>在创建<code>NioServerSocketChannelConfig</code>的过程中会创建<code>RecvByteBufAllocator</code>。</p> <div class="language- extra-class"><pre class="language-text"><code>   public DefaultChannelConfig(Channel channel) {
+            this(channel, new AdaptiveRecvByteBufAllocator());
+    }
+</code></pre></div><p>这里我们看到NioServerSocketChannel中的RecvByteBufAllocator实际类型为<code>AdaptiveRecvByteBufAllocator</code>，顾名思义，这个类型的RecvByteBufAllocator可以根据Channel上每次到来的IO数据大小来自适应动态调整ByteBuffer的容量。</p> <p>对于服务端NioServerSocketChannel来说，它上边的IO数据就是客户端的连接，它的长度和类型都是固定的，所以在接收客户端连接的时候并不需要这样的一个ByteBuffer来接收，我们会将接收到的客户端连接存放在<code>List&lt;Object&gt; readBuf</code>集合中</p> <p>对于客户端NioSocketChannel来说，它上边的IO数据时客户端发送来的网络数据，长度是不定的，所以才会需要这样一个可以根据每次IO数据的大小来自适应动态调整容量的ByteBuffer来接收。</p> <p>那么看起来这个RecvByteBufAllocator和本文的主题不是很关联，因为在接收连接的过程中并不会怎么用到它，这个类笔者还会在后面的文章中详细介绍，之所以这里把它拎出来单独介绍是因为它和本文开头提到的Bug有关系，这个Bug就是由这个类引起的。</p> <h3 id="_3-1-recvbytebufallocator-handle的获取"><a href="#_3-1-recvbytebufallocator-handle的获取" class="header-anchor">#</a> 3.1 RecvByteBufAllocator.Handle的获取</h3> <p>在本文中，我们是通过NioServerSocketChannel中的unsafe底层操作类来获取RecvByteBufAllocator.Handle的</p> <div class="language- extra-class"><pre class="language-text"><code>final RecvByteBufAllocator.Handle allocHandle = unsafe().recvBufAllocHandle();
+protected abstract class AbstractUnsafe implements Unsafe {
+        @Override
+        public RecvByteBufAllocator.Handle recvBufAllocHandle() {
+            if (recvHandle == null) {
+                recvHandle = config().getRecvByteBufAllocator().newHandle();
+            }
+            return recvHandle;
+        }
+}
+</code></pre></div><p>我们看到最终会在NioServerSocketChannel的配置类NioServerSocketChannelConfig中获取到<code>AdaptiveRecvByteBufAllocator</code></p> <div class="language- extra-class"><pre class="language-text"><code>public class DefaultChannelConfig implements ChannelConfig {
+    //用于Channel接收数据用的buffer分配器  类型为AdaptiveRecvByteBufAllocator
+    private volatile RecvByteBufAllocator rcvBufAllocator;
+}
+</code></pre></div><p><code>AdaptiveRecvByteBufAllocator</code>中会创建自适应动态调整容量的ByteBuffer分配器。</p> <div class="language- extra-class"><pre class="language-text"><code>public class AdaptiveRecvByteBufAllocator extends DefaultMaxMessagesRecvByteBufAllocator {
+
+    @Override
+    public Handle newHandle() {
+        return new HandleImpl(minIndex, maxIndex, initial);
+    }
+    
+    private final class HandleImpl extends MaxMessageHandle {
+                  .................省略................
+    }
+}
+</code></pre></div><p>这里的<code>newHandle</code>方法返回的具体类型为<code>MaxMessageHandle</code>，这个<code>MaxMessageHandle</code>里边保存了每次从<code>Channel</code>中读取<code>IO数据</code>的容量指标，方便下次读取时分配合适大小的<code>buffer</code>。</p> <p>每次在使用<code>allocHandle</code>前需要调用<code>allocHandle.reset(config);</code>重置里边的统计指标。</p> <div class="language- extra-class"><pre class="language-text"><code>    public abstract class MaxMessageHandle implements ExtendedHandle {
+        private ChannelConfig config;
+        //每次事件轮询时，最多读取16次
+        private int maxMessagePerRead;
+        //本次事件轮询总共读取的message数,这里指的是接收连接的数量
+        private int totalMessages;
+        //本次事件轮询总共读取的字节数
+        private int totalBytesRead;
+
+       @Override
+        public void reset(ChannelConfig config) {
+            this.config = config;
+            //默认每次最多读取16次
+            maxMessagePerRead = maxMessagesPerRead();
+            totalMessages = totalBytesRead = 0;
+        }
+    }
+</code></pre></div><ul><li><strong>maxMessagePerRead</strong>：用于控制每次read loop里最大可以循环读取的次数，默认为16次，可在启动配置类<code>ServerBootstrap</code>中通过<code>ChannelOption.MAX_MESSAGES_PER_READ</code>选项设置。</li></ul> <div class="language- extra-class"><pre class="language-text"><code>ServerBootstrap b = new ServerBootstrap();
+b.group(bossGroup, workerGroup)
+  .channel(NioServerSocketChannel.class)
+  .option(ChannelOption.MAX_MESSAGES_PER_READ, 自定义次数)
+</code></pre></div><ul><li><strong>totalMessages</strong>：用于统计read loop中总共接收的连接个数，每次read loop循环后会调用<code>allocHandle.incMessagesRead</code>增加记录接收到的连接个数。</li></ul> <div class="language- extra-class"><pre class="language-text"><code>        @Override
+        public final void incMessagesRead(int amt) {
+            totalMessages += amt;
+        }
+</code></pre></div><ul><li><strong>totalBytesRead</strong>：用于统计在read loop中总共接收到客户端连接上的数据大小，这个字段主要用于sub reactor在接收客户端NioSocketChannel上的网络数据用的，本文我们介绍的是main reactor接收客户端连接，所以这里并不会用到这个字段。这个字段会在sub reactor每次读取完NioSocketChannel上的网络数据时增加记录。</li></ul> <div class="language- extra-class"><pre class="language-text"><code>        @Override
+        public void lastBytesRead(int bytes) {
+            lastBytesRead = bytes;
+            if (bytes &gt; 0) {
+                totalBytesRead += bytes;
+            }
+        }
+</code></pre></div><p>MaxMessageHandler中还有一个非常重要的方法就是在每次read loop末尾会调用<code>allocHandle.continueReading()</code>方法来判断读取连接次数是否已满16次，来决定main reactor线程是否退出循环。</p> <div class="language- extra-class"><pre class="language-text"><code>                  do {
+                        //底层调用NioServerSocketChannel-&gt;doReadMessages 创建客户端SocketChannel
+                        int localRead = doReadMessages(readBuf);
+                        if (localRead == 0) {
+                            break;
+                        }
+                        if (localRead &lt; 0) {
+                            closed = true;
+                            break;
+                        }
+                        //统计在当前事件循环中已经读取到得Message数量（创建连接的个数）
+                        allocHandle.incMessagesRead(localRead);
+                    } while (allocHandle.continueReading());
+</code></pre></div><p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNiadlS4S4GAOnWGfc4cAFuhpziasUfsEWHxBfh3nKvLNvBAFAWEAP2sJibw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">image.png</p> <p>红框中圈出来的两个判断条件和本文主题无关，我们这里不需要关注，笔者会在后面的文章详细介绍。</p> <ul><li><code>totalMessages &lt; maxMessagePerRead</code>：在本文的接收客户端连接场景中，这个条件用于判断main reactor线程在read loop中的读取次数是否超过了16次。如果超过16次就会返回false，main reactor线程退出循环。</li> <li><code>totalBytesRead &gt; 0</code>：用于判断当客户端NioSocketChannel上的OP_READ事件活跃时，sub reactor线程在read loop中是否读取到了网络数据。</li></ul> <p>以上内容就是RecvByteBufAllocator.Handle在接收客户端连接场景下的作用，大家这里仔细看下这个<code>allocHandle.continueReading()</code>方法退出循环的判断条件，再结合整个<code>do{....}while(...)</code>接收连接循环体，感受下是否哪里有些不对劲？Bug即将出现~~~</p> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNia73S7DDn065yic2ibMIJ2CB70d9VuqkWqj9ydiaAk4yDaKbHZ5Z3rlfQfA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">image.png</p> <h2 id="_4-啊哈-bug"><a href="#_4-啊哈-bug" class="header-anchor">#</a> 4. 啊哈！！Bug ! !</h2> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNia1WWpXwfWKkgmhBW2wuBConIInzvqErmKhCjykxao8tPMQq4aMzRMWw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">image.png</p> <p>netty不论是在本文中处理接收客户端连接的场景还是在处理接收客户端连接上的网络数据场景都会在一个<code>do{....}while(...)</code>循环read loop中不断的处理。</p> <p>同时也都会利用在上一小节中介绍的<code>RecvByteBufAllocator.Handle</code>来记录每次read loop接收到的连接个数和从连接上读取到的网络数据大小。</p> <p>从而在read loop的末尾都会通过<code>allocHandle.continueReading()</code>方法判断是否应该退出read loop循环结束连接的接收流程或者是结束连接上数据的读取流程。</p> <p>无论是用于接收客户端连接的main reactor也好还是用于接收客户端连接上的网络数据的sub reactor也好，它们的运行框架都是一样的，只不过是具体分工不同。</p> <p>所以netty这里想用统一的<code>RecvByteBufAllocator.Handle</code>来处理以上两种场景。</p> <p>而<code>RecvByteBufAllocator.Handle</code>中的<code>totalBytesRead</code>字段主要记录sub reactor线程在处理客户端NioSocketChannel中OP_READ事件活跃时，总共在read loop中读取到的网络数据，而这里是main reactor线程在接收客户端连接所以这个字段并不会被设置。totalBytesRead字段的值在本文中永远会是<code>0</code>。</p> <p>所以无论同时有多少个客户端并发连接到服务端上，在接收连接的这个read loop中永远只会接受一个连接就会退出循环，因为<code>allocHandle.continueReading()方法</code>中的判断条件<code>totalBytesRead &gt; 0</code>永远会返回<code>false</code>。</p> <div class="language- extra-class"><pre class="language-text"><code>                  do {
+                        //底层调用NioServerSocketChannel-&gt;doReadMessages 创建客户端SocketChannel
+                        int localRead = doReadMessages(readBuf);
+                        if (localRead == 0) {
+                            break;
+                        }
+                        if (localRead &lt; 0) {
+                            closed = true;
+                            break;
+                        }
+                        //统计在当前事件循环中已经读取到得Message数量（创建连接的个数）
+                        allocHandle.incMessagesRead(localRead);
+                    } while (allocHandle.continueReading());
+</code></pre></div><p><strong>而netty的本意是在这个read loop循环中尽可能多的去接收客户端的并发连接，同时又不影响main reactor线程执行异步任务。但是由于这个Bug，main reactor在这个循环中只执行一次就结束了。这也一定程度上就影响了netty的吞吐</strong>。</p> <p>让我们想象下这样的一个场景，当有16个客户端同时并发连接到了服务端，这时NioServerSocketChannel上的<code>OP_ACCEPT事件</code>活跃，main reactor从Selector上被唤醒，随后执行<code>OP_ACCEPT事件</code>的处理。</p> <div class="language- extra-class"><pre class="language-text"><code>public final class NioEventLoop extends SingleThreadEventLoop {
+    @Override
+    protected void run() {
+        int selectCnt = 0;
+        for (;;) {
+            try { 
+                int strategy;
+                try {
+                    strategy = selectStrategy.calculateStrategy(selectNowSupplier, hasTasks());
+                    switch (strategy) {
+                    case SelectStrategy.CONTINUE:                  
+                          ............省略.........
+                    case SelectStrategy.BUSY_WAIT:
+
+                          ............省略.........
+                    case SelectStrategy.SELECT:
+                            ............监听轮询IO事件.........
+                    default:
+                    }
+                } catch (IOException e) {
+                    ............省略.........
+                }
+
+                ............处理IO就绪事件.........
+                ............执行异步任务.........
+    }
+}
+</code></pre></div><p>但是由于这个Bug的存在，main reactor在接收客户端连接的这个read loop中只接收了一个客户端连接就匆匆返回了。</p> <div class="language- extra-class"><pre class="language-text"><code>      private final class NioMessageUnsafe extends AbstractNioUnsafe {
+                    do {
+                        int localRead = doReadMessages(readBuf);
+                        .........省略...........
+                    } while (allocHandle.continueReading());
+     }
+</code></pre></div><p>然后根据下图中这个Reactor的运行结构去执行异步任务，随后绕一大圈又会回到<code>NioEventLoop#run</code>方法中重新发起一轮OP_ACCEPT事件轮询。</p> <p>![图片](data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='1px' height='1px' viewBox='0 0 1 1' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Ctitle%3E%3C/title%3E%3Cg stroke='none' stroke-width='1' fill='none' fill-rule='evenodd' fill-opacity='0'%3E%3Cg transform='translate(-249.000000, -126.000000)' fill='%23FFFFFF'%3E%3Crect x='249' y='126' width='1' height='1'%3E%3C/rect%3E%3C/g%3E%3C/g%3E%3C/svg%3E)Reactor线程运行时结构.png</p> <p>由于现在还有15个客户端并发连接没有被接收，所以此时Main Reactor线程并不会在<code>selector.select()</code>上阻塞，最终绕一圈又会回到<code>NioMessageUnsafe#read</code>方法的<code>do{.....}while()</code>循环。在接收一个连接之后又退出循环。</p> <p>本来我们可以在一次read loop中把这16个并发的客户端连接全部接收完毕的，因为这个Bug，main reactor需要不断的发起OP_ACCEPT事件的轮询，绕了很大一个圈子。<strong>同时也增加了许多不必要的selector.select()系统调用开销</strong></p> <p><img src="https://echo798.oss-cn-shenzhen.aliyuncs.com/img/202409191110731.webp" alt="图片">issue讨论.png</p> <p>这时大家在看这个?Issue#11708中的讨论是不是就清晰很多了~~</p> <blockquote><p>Issue#11708：https://github.com/netty/netty/issues/11708</p></blockquote> <h3 id="_4-1-bug的修复"><a href="#_4-1-bug的修复" class="header-anchor">#</a> 4.1 Bug的修复</h3> <blockquote><p>笔者在写这篇文章的时候，Netty最新版本是4.1.68.final，这个Bug在4.1.69.final中被修复。</p></blockquote> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNiamkpfIdsVEQRQibNvxZYJJiaTQFHvmuiasd23LH4hjLazv0W1sibvr46nkA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">image.png</p> <p>由于该Bug产生的原因正是因为服务端NioServerSocketChannel（用于监听端口地址和接收客户端连接）和 客户端NioSocketChannel（用于通信）中的Config配置类混用了同一个ByteBuffer分配器<code>AdaptiveRecvByteBufAllocator</code>而导致的。</p> <p>所以在新版本修复中专门为服务端ServerSocketChannel中的Config配置类引入了一个新的ByteBuffer分配器<code>ServerChannelRecvByteBufAllocator</code>，专门用于服务端ServerSocketChannel接收客户端连接的场景。</p> <p>![图片](data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='1px' height='1px' viewBox='0 0 1 1' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Ctitle%3E%3C/title%3E%3Cg stroke='none' stroke-width='1' fill='none' fill-rule='evenodd' fill-opacity='0'%3E%3Cg transform='translate(-249.000000, -126.000000)' fill='%23FFFFFF'%3E%3Crect x='249' y='126' width='1' height='1'%3E%3C/rect%3E%3C/g%3E%3C/g%3E%3C/svg%3E)image.png</p> <p>![图片](data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='1px' height='1px' viewBox='0 0 1 1' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Ctitle%3E%3C/title%3E%3Cg stroke='none' stroke-width='1' fill='none' fill-rule='evenodd' fill-opacity='0'%3E%3Cg transform='translate(-249.000000, -126.000000)' fill='%23FFFFFF'%3E%3Crect x='249' y='126' width='1' height='1'%3E%3C/rect%3E%3C/g%3E%3C/g%3E%3C/svg%3E)image.png</p> <p>在<code>ServerChannelRecvByteBufAllocator</code>的父类<code>DefaultMaxMessagesRecvByteBufAllocator</code>中引入了一个新的字段<code>ignoreBytesRead</code>，用于表示是否忽略网络字节的读取，在创建服务端Channel配置类NioServerSocketChannelConfig的时候，这个字段会被赋值为<code>true</code>。</p> <p>![图片](data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='1px' height='1px' viewBox='0 0 1 1' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Ctitle%3E%3C/title%3E%3Cg stroke='none' stroke-width='1' fill='none' fill-rule='evenodd' fill-opacity='0'%3E%3Cg transform='translate(-249.000000, -126.000000)' fill='%23FFFFFF'%3E%3Crect x='249' y='126' width='1' height='1'%3E%3C/rect%3E%3C/g%3E%3C/g%3E%3C/svg%3E)image.png</p> <p>当main reactor线程在read loop循环中接收客户端连接的时候。</p> <div class="language- extra-class"><pre class="language-text"><code>      private final class NioMessageUnsafe extends AbstractNioUnsafe {
+
+                    do {
+                        int localRead = doReadMessages(readBuf);
+                        .........省略...........
+                    } while (allocHandle.continueReading());
+     }
+</code></pre></div><p>在read loop循环的末尾就会采用从<code>ServerChannelRecvByteBufAllocator</code>中创建的<code>MaxMessageHandle#continueReading</code>方法来判断读取连接次数是否超过了16次。由于这里的<code>ignoreBytesRead == true</code>这回我们就会忽略<code>totalBytesRead == 0</code>的情况，从而使得接收连接的read loop得以继续地执行下去。在一个read loop中一次性把16个连接全部接收完毕。</p> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNiabJdRFibbDhoULfxwyl3njuSGPmiaw9KwAtB7hicggEYHwcUbMZe4BibEDQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">image.png</p> <p>以上就是对这个Bug产生的原因，以及发现的过程，最后修复的方案一个全面的介绍，因此笔者也出现在了netty 4.1.69.final版本发布公告里的thank-list中。哈哈，真是令人开心的一件事情~~~</p> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNiaEtpEzZGwchbkWicibbjCuOujhoHFk1GrxibqAKnfVkticFu04DQX8XyWkw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">image.png</p> <p>通过以上对netty接收客户端连接的全流程分析和对这个Bug来龙去脉以及修复方案的介绍，大家现在一定已经理解了整个接收连接的流程框架。</p> <p>接下来笔者就把这个流程中涉及到的一些核心模块在单独拎出来从细节入手，为大家各个击破~~~</p> <h2 id="_5-doreadmessages接收客户端连接"><a href="#_5-doreadmessages接收客户端连接" class="header-anchor">#</a> 5. doReadMessages接收客户端连接</h2> <div class="language- extra-class"><pre class="language-text"><code>public class NioServerSocketChannel extends AbstractNioMessageChannel
+                             implements io.netty.channel.socket.ServerSocketChannel {
+
+    @Override
+    protected int doReadMessages(List&lt;Object&gt; buf) throws Exception {
+        SocketChannel ch = SocketUtils.accept(javaChannel());
+
+        try {
+            if (ch != null) {
+                buf.add(new NioSocketChannel(this, ch));
+                return 1;
+            }
+        } catch (Throwable t) {
+            logger.warn(&quot;Failed to create a new channel from an accepted socket.&quot;, t);
+
+            try {
+                ch.close();
+            } catch (Throwable t2) {
+                logger.warn(&quot;Failed to close a socket.&quot;, t2);
+            }
+        }
+
+        return 0;
+    }
+
+}
+</code></pre></div><ul><li>通过<code>javaChannel()</code>获取封装在Netty服务端<code>NioServerSocketChannel</code>中的<code>JDK 原生 ServerSocketChannel</code>。</li></ul> <div class="language- extra-class"><pre class="language-text"><code>    @Override
+    protected ServerSocketChannel javaChannel() {
+        return (ServerSocketChannel) super.javaChannel();
+    }
+</code></pre></div><ul><li>通过<code>JDK NIO 原生</code>的<code>ServerSocketChannel</code>的<code>accept方法</code>获取<code>JDK NIO 原生</code>客户端连接<code>SocketChannel</code>。</li></ul> <div class="language- extra-class"><pre class="language-text"><code>    public static SocketChannel accept(final ServerSocketChannel serverSocketChannel) throws IOException {
+        try {
+            return AccessController.doPrivileged(new PrivilegedExceptionAction&lt;SocketChannel&gt;() {
+                @Override
+                public SocketChannel run() throws IOException {
+                    return serverSocketChannel.accept();
+                }
+            });
+        } catch (PrivilegedActionException e) {
+            throw (IOException) e.getCause();
+        }
+    }
+</code></pre></div><p>这一步就是我们在<a href="https://mp.weixin.qq.com/s?__biz=Mzg2MzU3Mjc3Ng==&amp;mid=2247483737&amp;idx=1&amp;sn=7ef3afbb54289c6e839eed724bb8a9d6&amp;chksm=ce77c71ef9004e08e3d164561e3a2708fc210c05408fa41f7fe338d8e85f39c1ad57519b614e&amp;scene=21#wechat_redirect" target="_blank" rel="noopener noreferrer">?《聊聊Netty那些事儿之从内核角度看IO模型》<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a>介绍到的调用<code>监听Socket</code>的<code>accept方法</code>，内核会基于<code>监听Socket</code>创建出来一个新的<code>Socket</code>专门用于与客户端之间的网络通信这个我们称之为<code>客户端连接Socket</code>。这里的<code>ServerSocketChannel</code>就类似于<code>监听Socket</code>。<code>SocketChannel</code>就类似于<code>客户端连接Socket</code>。</p> <p>由于我们在创建<code>NioServerSocketChannel</code>的时候，会将<code>JDK NIO 原生</code>的<code>ServerSocketChannel</code>设置为<code>非阻塞</code>，所以这里当<code>ServerSocketChannel</code>上有客户端连接时就会直接创建<code>SocketChannel</code>，如果此时并没有客户端连接时<code>accept调用</code>就会立刻返回<code>null</code>并不会阻塞。</p> <div class="language- extra-class"><pre class="language-text"><code>    protected AbstractNioChannel(Channel parent, SelectableChannel ch, int readInterestOp) {
+        super(parent);
+        this.ch = ch;
+        this.readInterestOp = readInterestOp;
+        try {
+            //设置Channel为非阻塞 配合IO多路复用模型
+            ch.configureBlocking(false);
+        } catch (IOException e) {
+          ..........省略.............
+        }
+    }
+</code></pre></div><h3 id="_5-1-创建客户端niosocketchannel"><a href="#_5-1-创建客户端niosocketchannel" class="header-anchor">#</a> 5.1 创建客户端NioSocketChannel</h3> <div class="language- extra-class"><pre class="language-text"><code>public class NioServerSocketChannel extends AbstractNioMessageChannel
+                             implements io.netty.channel.socket.ServerSocketChannel {
+
+    @Override
+    protected int doReadMessages(List&lt;Object&gt; buf) throws Exception {
+        SocketChannel ch = SocketUtils.accept(javaChannel());
+
+        try {
+            if (ch != null) {
+                buf.add(new NioSocketChannel(this, ch));
+                return 1;
+            }
+        } catch (Throwable t) {
+          .........省略.......
+        }
+
+        return 0;
+    }
+
+}
+</code></pre></div><p>这里会根据<code>ServerSocketChannel</code>的<code>accept</code>方法获取到<code>JDK NIO 原生</code>的<code>SocketChannel</code>（用于底层真正与客户端通信的Channel），来创建Netty中的<code>NioSocketChannel</code>。</p> <div class="language- extra-class"><pre class="language-text"><code>public class NioSocketChannel extends AbstractNioByteChannel implements io.netty.channel.socket.SocketChannel {
+
+    public NioSocketChannel(Channel parent, SocketChannel socket) {
+        super(parent, socket);
+        config = new NioSocketChannelConfig(this, socket.socket());
+    }
+
+}
+</code></pre></div><p>创建客户端<code>NioSocketChannel</code>的过程其实和之前讲的创建服务端<code>NioServerSocketChannel</code>大体流程是一样的，我们这里只对客户端<code>NioSocketChannel</code>和服务端<code>NioServerSocketChannel</code>在创建过程中的不同之处做一个对比。</p> <blockquote><p>具体细节部分大家可以在回看下<a href="https://mp.weixin.qq.com/s?__biz=Mzg2MzU3Mjc3Ng==&amp;mid=2247484005&amp;idx=1&amp;sn=52f51269902a58f40d33208421109bc3&amp;chksm=ce77c422f9004d340e5b385ef6ba24dfba1f802076ace80ad6390e934173a10401e64e13eaeb&amp;scene=21#wechat_redirect" target="_blank" rel="noopener noreferrer">?《详细图解Netty Reactor启动全流程》<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a>一文中关于<code>NioServerSocketChannel</code>的创建的详细细节。</p></blockquote> <h3 id="_5-3-对比niosocketchannel与nioserversocketchannel的不同"><a href="#_5-3-对比niosocketchannel与nioserversocketchannel的不同" class="header-anchor">#</a> 5.3 对比NioSocketChannel与NioServerSocketChannel的不同</h3> <h4 id="_1-channel的层次不同"><a href="#_1-channel的层次不同" class="header-anchor">#</a> 1：Channel的层次不同</h4> <p>在我们介绍Reactor的创建文章中，我们提到Netty中的<code>Channel</code>是具有层次的。由于客户端NioSocketChannel是在main reactor接收连接时在服务端NioServerSocketChannel中被创建的，所以在创建客户端NioSocketChannel的时候会通过构造函数指定了parent属性为<code>NioServerSocketChanel</code>。并将<code>JDK NIO 原生</code>的<code>SocketChannel</code>封装进Netty的客户端<code>NioSocketChannel</code>中。</p> <p>而在Reactor启动过程中创建<code>NioServerSocketChannel</code>的时候<code>parent属性</code>指定是<code>null</code>。因为它就是顶层的<code>Channel</code>，负责创建客户端<code>NioSocketChannel</code>。</p> <div class="language- extra-class"><pre class="language-text"><code>    public NioServerSocketChannel(ServerSocketChannel channel) {
+        super(null, channel, SelectionKey.OP_ACCEPT);
+        config = new NioServerSocketChannelConfig(this, javaChannel().socket());
+    }
+</code></pre></div><h4 id="_2-向reactor注册的io事件不同"><a href="#_2-向reactor注册的io事件不同" class="header-anchor">#</a> 2：向Reactor注册的IO事件不同</h4> <p>客户端NioSocketChannel向Sub Reactor注册的是<code>SelectionKey.OP_READ事件</code>，而服务端NioServerSocketChannel向Main Reactor注册的是<code>SelectionKey.OP_ACCEPT事件</code>。</p> <div class="language- extra-class"><pre class="language-text"><code>public abstract class AbstractNioByteChannel extends AbstractNioChannel {
+
+    protected AbstractNioByteChannel(Channel parent, SelectableChannel ch) {
+        super(parent, ch, SelectionKey.OP_READ);
+    }
+
+}
+
+public class NioServerSocketChannel extends AbstractNioMessageChannel
+                             implements io.netty.channel.socket.ServerSocketChannel {
+
+   public NioServerSocketChannel(ServerSocketChannel channel) {
+        //父类AbstractNioChannel中保存JDK NIO原生ServerSocketChannel以及要监听的事件OP_ACCEPT
+        super(null, channel, SelectionKey.OP_ACCEPT);
+        //DefaultChannelConfig中设置用于Channel接收数据用的buffer-&gt;AdaptiveRecvByteBufAllocator
+        config = new NioServerSocketChannelConfig(this, javaChannel().socket());
+    }
+}
+</code></pre></div><h4 id="_3-功能属性不同造成继承结构的不同"><a href="#_3-功能属性不同造成继承结构的不同" class="header-anchor">#</a> 3: 功能属性不同造成继承结构的不同</h4> <p>![图片](data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='1px' height='1px' viewBox='0 0 1 1' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Ctitle%3E%3C/title%3E%3Cg stroke='none' stroke-width='1' fill='none' fill-rule='evenodd' fill-opacity='0'%3E%3Cg transform='translate(-249.000000, -126.000000)' fill='%23FFFFFF'%3E%3Crect x='249' y='126' width='1' height='1'%3E%3C/rect%3E%3C/g%3E%3C/g%3E%3C/svg%3E)NioSocketChannel.png</p> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNiaJhrEYzibyhX4xH6g502Qobny1kJrRNvgo7j0duvaw9HC2f5eXQPqoTg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">NioServerSocketChannel.png</p> <p>客户端<code>NioSocketChannel</code>继承的是<code>AbstractNioByteChannel</code>，而服务端<code>NioServerSocketChannel</code>继承的是<code>AbstractNioMessageChannel</code>。它们继承的这两个抽象类一个前缀是<code>Byte</code>，一个前缀是<code>Message</code>有什么区别吗？？</p> <blockquote><p>客户端<code>NioSocketChannel</code>主要处理的是服务端与客户端的通信，这里涉及到接收客户端发送来的数据，而<code>Sub Reactor线程</code>从<code>NioSocketChannel</code>中读取的正是网络通信数据单位为<code>Byte</code>。</p></blockquote> <blockquote><p>服务端<code>NioServerSocketChannel</code>主要负责处理<code>OP_ACCEPT事件</code>，创建用于通信的客户端<code>NioSocketChannel</code>。这时候客户端与服务端还没开始通信，所以<code>Main Reactor线程</code>从<code>NioServerSocketChannel</code>的读取对象为<code>Message</code>。这里的<code>Message</code>指的就是底层的<code>SocketChannel</code>客户端连接。</p></blockquote> <hr> <p>以上就是<code>NioSocketChannel</code>与<code>NioServerSocketChannel</code>创建过程中的不同之处，后面的过程就一样了。</p> <ul><li>在AbstractNioChannel 类中封装JDK NIO 原生的<code>SocketChannel</code>，并将其底层的IO模型设置为<code>非阻塞</code>，保存需要监听的IO事件<code>OP_READ</code>。</li></ul> <div class="language- extra-class"><pre class="language-text"><code>    protected AbstractNioChannel(Channel parent, SelectableChannel ch, int readInterestOp) {
+        super(parent);
+        this.ch = ch;
+        this.readInterestOp = readInterestOp;
+        try {
+            //设置Channel为非阻塞 配合IO多路复用模型
+            ch.configureBlocking(false);
+        } catch (IOException e) {
+
+        }
+    }
+</code></pre></div><ul><li>为客户端NioSocketChannel创建全局唯一的<code>channelId</code>，创建客户端NioSocketChannel的底层操作类<code>NioByteUnsafe</code>，创建pipeline。</li></ul> <div class="language- extra-class"><pre class="language-text"><code>    protected AbstractChannel(Channel parent) {
+        this.parent = parent;
+        //channel全局唯一ID machineId+processId+sequence+timestamp+random
+        id = newId();
+        //unsafe用于底层socket的读写操作
+        unsafe = newUnsafe();
+        //为channel分配独立的pipeline用于IO事件编排
+        pipeline = newChannelPipeline();
+    }
+</code></pre></div><ul><li>在NioSocketChannelConfig的创建过程中，将NioSocketChannel的RecvByteBufAllocator类型设置为<code>AdaptiveRecvByteBufAllocator</code>。</li></ul> <div class="language- extra-class"><pre class="language-text"><code>    public DefaultChannelConfig(Channel channel) {
+            this(channel, new AdaptiveRecvByteBufAllocator());
+    }
+</code></pre></div><blockquote><p>在Bug修复后的版本中服务端NioServerSocketChannel的RecvByteBufAllocator类型设置为<code>ServerChannelRecvByteBufAllocator</code></p></blockquote> <p>最终我们得到的客户端<code>NioSocketChannel</code>结构如下：</p> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNiaW2k5wARibzQC47D0ricxafnVibibz8usyYO8DIiagJObUwYIu1vS6fGW08A/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">NioSocketChannel.png</p> <h2 id="_6-channelread事件的响应"><a href="#_6-channelread事件的响应" class="header-anchor">#</a> 6. ChannelRead事件的响应</h2> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNiaDjWPOibC4yyvicZOQROz0VprRQdxN0scINPgOrCAVGxL1bUoV6ia4YJXQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">接收客户端连接.png</p> <p>在前边介绍接收连接的整体核心流程框架的时候，我们提到main reactor线程是在一个<code>do{.....}while(...)</code>循环read loop中不断的调用<code>ServerSocketChannel#accept</code>方法来接收客户端的连接。</p> <p>当满足退出read loop循环的条件有两个：</p> <ol><li>在限定的16次读取中，已经没有新的客户端连接要接收了。退出循环。</li> <li>从NioServerSocketChannel中读取客户端连接的次数达到了16次，无论此时是否还有客户端连接都需要退出循环。</li></ol> <p>main reactor就会退出read loop循环，此时接收到的客户端连接NioSocketChannel暂存与<code>List&lt;Object&gt; readBuf</code>集合中。</p> <div class="language- extra-class"><pre class="language-text"><code>    private final class NioMessageUnsafe extends AbstractNioUnsafe {
+
+        private final List&lt;Object&gt; readBuf = new ArrayList&lt;Object&gt;();
+
+        @Override
+        public void read() {
+            try {
+                try {
+                    do {
+                        ........省略.........
+                        //底层调用NioServerSocketChannel-&gt;doReadMessages 创建客户端SocketChannel
+                        int localRead = doReadMessages(readBuf);
+                        ........省略.........
+                        allocHandle.incMessagesRead(localRead);
+                    } while (allocHandle.continueReading());
+
+                } catch (Throwable t) {
+                    exception = t;
+                }
+
+                int size = readBuf.size();
+                for (int i = 0; i &lt; size; i ++) {
+                    readPending = false;
+                    pipeline.fireChannelRead(readBuf.get(i));
+                }
+                
+                  ........省略.........
+            } finally {
+                  ........省略.........
+            }
+        }
+    }
+</code></pre></div><p>随后main reactor线程会遍历<code>List&lt;Object&gt; readBuf</code>集合中的NioSocketChannel，并在NioServerSocketChannel的pipeline中传播ChannelRead事件。</p> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNiaLcRXsic4tugeyCbo2ZjSLhNtU09WGLEicbhFmqJBY7BDibKss8j2BTKibg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">传播ChannelRead事件.png</p> <p>最终<code>ChannelRead事件</code>会传播到<code>ServerBootstrapAcceptor</code>中，这里正是Netty处理客户端连接的核心逻辑所在。</p> <p><code>ServerBootstrapAcceptor</code>主要的作用就是初始化客户端<code>NioSocketChannel</code>，并将客户端NioSocketChannel注册到<code>Sub Reactor Group</code>中，并监听<code>OP_READ事件</code>。</p> <p>在ServerBootstrapAcceptor 中会初始化客户端NioSocketChannel的这些属性。</p> <p>比如：从Reactor组<code>EventLoopGroup childGroup</code>，用于初始化<code>NioSocketChannel</code>中的<code>pipeline</code>用到的<code>ChannelHandler childHandler</code>，以及<code>NioSocketChannel</code>中的一些<code>childOptions</code>和<code>childAttrs</code>。</p> <div class="language- extra-class"><pre class="language-text"><code>private static class ServerBootstrapAcceptor extends ChannelInboundHandlerAdapter {
+
+        private final EventLoopGroup childGroup;
+        private final ChannelHandler childHandler;
+        private final Entry&lt;ChannelOption&lt;?&gt;, Object&gt;[] childOptions;
+        private final Entry&lt;AttributeKey&lt;?&gt;, Object&gt;[] childAttrs;
+
+        @Override
+        @SuppressWarnings(&quot;unchecked&quot;)
+        public void channelRead(ChannelHandlerContext ctx, Object msg) {
+            final Channel child = (Channel) msg;
+
+            //向客户端NioSocketChannel的pipeline中
+            //添加在启动配置类ServerBootstrap中配置的ChannelHandler
+            child.pipeline().addLast(childHandler);
+
+            //利用配置的属性初始化客户端NioSocketChannel
+            setChannelOptions(child, childOptions, logger);
+            setAttributes(child, childAttrs);
+
+            try {
+                /**
+                 * 1：在Sub Reactor线程组中选择一个Reactor绑定
+                 * 2：将客户端SocketChannel注册到绑定的Reactor上
+                 * 3：SocketChannel注册到sub reactor中的selector上，并监听OP_READ事件
+                 * */
+                childGroup.register(child).addListener(new ChannelFutureListener() {
+                    @Override
+                    public void operationComplete(ChannelFuture future) throws Exception {
+                        if (!future.isSuccess()) {
+                            forceClose(child, future.cause());
+                        }
+                    }
+                });
+            } catch (Throwable t) {
+                forceClose(child, t);
+            }
+        }
+}
+</code></pre></div><p>正是在这里，netty会将我们在<a href="https://mp.weixin.qq.com/s?__biz=Mzg2MzU3Mjc3Ng==&amp;mid=2247484005&amp;idx=1&amp;sn=52f51269902a58f40d33208421109bc3&amp;chksm=ce77c422f9004d340e5b385ef6ba24dfba1f802076ace80ad6390e934173a10401e64e13eaeb&amp;scene=21#wechat_redirect" target="_blank" rel="noopener noreferrer">?《详细图解Netty Reactor启动全流程》<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a>的启动示例程序中在ServerBootstrap中配置的客户端NioSocketChannel的所有属性（child前缀配置）初始化到NioSocketChannel中。</p> <div class="language- extra-class"><pre class="language-text"><code>public final class EchoServer {
+    static final int PORT = Integer.parseInt(System.getProperty(&quot;port&quot;, &quot;8007&quot;));
+
+    public static void main(String[] args) throws Exception {
+        // Configure the server.
+        //创建主从Reactor线程组
+        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        final EchoServerHandler serverHandler = new EchoServerHandler();
+        try {
+            ServerBootstrap b = new ServerBootstrap();
+            b.group(bossGroup, workerGroup)//配置主从Reactor
+             .channel(NioServerSocketChannel.class)//配置主Reactor中的channel类型
+             .option(ChannelOption.SO_BACKLOG, 100)//设置主Reactor中channel的option选项
+             .handler(new LoggingHandler(LogLevel.INFO))//设置主Reactor中Channel-&gt;pipline-&gt;handler
+             .childHandler(new ChannelInitializer&lt;SocketChannel&gt;() {//设置从Reactor中注册channel的pipeline
+                 @Override
+                 public void initChannel(SocketChannel ch) throws Exception {
+                     ChannelPipeline p = ch.pipeline();
+                     //p.addLast(new LoggingHandler(LogLevel.INFO));
+                     p.addLast(serverHandler);
+                 }
+             });
+
+            // Start the server. 绑定端口启动服务，开始监听accept事件
+            ChannelFuture f = b.bind(PORT).sync();
+            // Wait until the server socket is closed.
+            f.channel().closeFuture().sync();
+        } finally {
+            // Shut down all event loops to terminate all threads.
+            bossGroup.shutdownGracefully();
+            workerGroup.shutdownGracefully();
+        }
+    }
+}
+</code></pre></div><p>以上示例代码中通过ServerBootstrap配置的NioSocketChannel相关属性，会在Netty启动并开始初始化<code>NioServerSocketChannel</code>的时候将<code>ServerBootstrapAcceptor</code>的创建初始化工作封装成<code>异步任务</code>，然后在<code>NioServerSocketChannel</code>注册到<code>Main Reactor</code>中成功后执行。</p> <div class="language- extra-class"><pre class="language-text"><code>public class ServerBootstrap extends AbstractBootstrap&lt;ServerBootstrap, ServerChannel&gt; {
+
+    @Override
+    void init(Channel channel) {
+        ................省略................
+
+        p.addLast(new ChannelInitializer&lt;Channel&gt;() {
+            @Override
+            public void initChannel(final Channel ch) {
+                final ChannelPipeline pipeline = ch.pipeline();
+                ................省略................
+                ch.eventLoop().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        pipeline.addLast(new ServerBootstrapAcceptor(
+                                ch, currentChildGroup, currentChildHandler, currentChildOptions, currentChildAttrs));
+                    }
+                });
+            }
+        });
+    }
+}
+</code></pre></div><p>在经过<code>ServerBootstrapAccptor#chanelRead回调</code>的处理之后，此时客户端NioSocketChannel中pipeline的结构为：</p> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNia6cNkLIW571QH74LhkCfFpibJSm1cwDQTQBcxClKehQVGRR3ibdP9Ea5A/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">客户端channel pipeline初始结构.png</p> <p>随后会将初始化好的客户端NioSocketChannel向Sub Reactor Group中注册，并监听<code>OP_READ事件</code>。</p> <p>如下图中的步骤3所示：</p> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNialDtXCOD5vvVGh56FT2yKauwTch6oYbrn1icPuYKaqY8nPibicWv66sQfw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">netty中的reactor.png</p> <h2 id="_7-向subreactorgroup中注册niosocketchannel"><a href="#_7-向subreactorgroup中注册niosocketchannel" class="header-anchor">#</a> 7. 向SubReactorGroup中注册NioSocketChannel</h2> <div class="language- extra-class"><pre class="language-text"><code>                childGroup.register(child).addListener(new ChannelFutureListener() {
+                    @Override
+                    public void operationComplete(ChannelFuture future) throws Exception {
+                        if (!future.isSuccess()) {
+                            forceClose(child, future.cause());
+                        }
+                    }
+                });
+</code></pre></div><p>客户端NioSocketChannel向Sub Reactor Group注册的流程完全和服务端NioServerSocketChannel向Main Reactor Group注册流程一样。</p> <blockquote><p>关于服务端NioServerSocketChannel的注册流程，笔者已经在<a href="https://mp.weixin.qq.com/s?__biz=Mzg2MzU3Mjc3Ng==&amp;mid=2247484005&amp;idx=1&amp;sn=52f51269902a58f40d33208421109bc3&amp;chksm=ce77c422f9004d340e5b385ef6ba24dfba1f802076ace80ad6390e934173a10401e64e13eaeb&amp;scene=21#wechat_redirect" target="_blank" rel="noopener noreferrer">?《详细图解Netty Reactor启动全流程》<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a>一文中做出了详细的介绍，对相关细节感兴趣的同学可以在回看下。</p></blockquote> <p>这里笔者在带大家简要回顾下整个注册过程并着重区别对比客户端NioSocetChannel与服务端NioServerSocketChannel注册过程中不同的地方。</p> <h3 id="_7-1-从sub-reactor-group中选取一个sub-reactor进行绑定"><a href="#_7-1-从sub-reactor-group中选取一个sub-reactor进行绑定" class="header-anchor">#</a> 7.1 从Sub Reactor Group中选取一个Sub Reactor进行绑定</h3> <div class="language- extra-class"><pre class="language-text"><code>public abstract class MultithreadEventLoopGroup extends MultithreadEventExecutorGroup implements EventLoopGroup {
+
+   @Override
+    public ChannelFuture register(Channel channel) {
+        return next().register(channel);
+    }
+
+    @Override
+    public EventExecutor next() {
+        return chooser.next();
+    }
+
+}
+</code></pre></div><h3 id="_7-2-向绑定的sub-reactor上注册niosocketchannel"><a href="#_7-2-向绑定的sub-reactor上注册niosocketchannel" class="header-anchor">#</a> 7.2 向绑定的Sub Reactor上注册NioSocketChannel</h3> <div class="language- extra-class"><pre class="language-text"><code>public abstract class SingleThreadEventLoop extends SingleThreadEventExecutor implements EventLoop {
+
+    @Override
+    public ChannelFuture register(Channel channel) {
+        //注册channel到绑定的Reactor上
+        return register(new DefaultChannelPromise(channel, this));
+    }
+
+    @Override
+    public ChannelFuture register(final ChannelPromise promise) {
+        ObjectUtil.checkNotNull(promise, &quot;promise&quot;);
+        //unsafe负责channel底层的各种操作
+        promise.channel().unsafe().register(this, promise);
+        return promise;
+    }
+
+}
+</code></pre></div><ul><li>当时我们在介绍<code>NioServerSocketChannel</code>的注册过程时，这里的<code>promise.channel()</code>为<code>NioServerSocketChannel</code>。底层的unsafe操作类为<code>NioMessageUnsafe</code>。</li> <li>此时这里的<code>promise.channel()</code>为<code>NioSocketChannel</code>。底层的unsafe操作类为<code>NioByteUnsafe</code>。</li></ul> <div class="language- extra-class"><pre class="language-text"><code>        @Override
+        public final void register(EventLoop eventLoop, final ChannelPromise promise) {
+            ..............省略....................
+            //此时这里的eventLoop为Sub Reactor
+            AbstractChannel.this.eventLoop = eventLoop;
+
+            /**
+             * 执行channel注册的操作必须是Reactor线程来完成
+             *
+             * 1: 如果当前执行线程是Reactor线程，则直接执行register0进行注册
+             * 2：如果当前执行线程是外部线程，则需要将register0注册操作 封装程异步Task 由Reactor线程执行
+             * */
+            if (eventLoop.inEventLoop()) {
+                register0(promise);
+            } else {
+                try {
+                    eventLoop.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            register0(promise);
+                        }
+                    });
+                } catch (Throwable t) {
+                    ..............省略....................
+                }
+            }
+        }
+</code></pre></div><p><strong>注意此时传递进来的EventLoop eventLoop为Sub Reactor</strong>。</p> <p><strong>但此时的执行线程为<code>Main Reactor线程</code>，并不是Sub Reactor线程（此时还未启动）</strong>。</p> <p>所以这里的<code>eventLoop.inEventLoop()</code>返回的是<code>false</code>。</p> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNiazIA5weroZkxOLyqsUBrN8Q1XP3NM5vBsFVdZXIGz1Il7FPprdZ4TNg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">image.png</p> <p>在<code>else分支</code>中向绑定的Sub Reactor提交注册<code>NioSocketChannel</code>的任务。</p> <blockquote><p>当注册任务提交后，此时绑定的<code>Sub Reactor线程</code>启动。</p></blockquote> <h3 id="_7-3-register0"><a href="#_7-3-register0" class="header-anchor">#</a> 7.3 register0</h3> <p>我们又来到了Channel注册的老地方<code>register0方法</code>。在<a href="https://mp.weixin.qq.com/s?__biz=Mzg2MzU3Mjc3Ng==&amp;mid=2247484005&amp;idx=1&amp;sn=52f51269902a58f40d33208421109bc3&amp;chksm=ce77c422f9004d340e5b385ef6ba24dfba1f802076ace80ad6390e934173a10401e64e13eaeb&amp;scene=21#wechat_redirect" target="_blank" rel="noopener noreferrer">?《详细图解Netty Reactor启动全流程》<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a>中我们花了大量的篇幅介绍了这个方法。这里我们只对比<code>NioSocketChannel</code>与<code>NioServerSocketChannel</code>不同的地方。</p> <div class="language- extra-class"><pre class="language-text"><code> private void register0(ChannelPromise promise) {
+            try {
+                ................省略..................
+                boolean firstRegistration = neverRegistered;
+                //执行真正的注册操作
+                doRegister();
+                //修改注册状态
+                neverRegistered = false;
+                registered = true;
+
+                pipeline.invokeHandlerAddedIfNeeded();
+
+                if (isActive()) {
+                    if (firstRegistration) {
+                        //触发channelActive事件
+                        pipeline.fireChannelActive();
+                    } else if (config().isAutoRead()) {
+                        beginRead();
+                    }
+                }
+            } catch (Throwable t) {
+                 ................省略..................
+            }
+        }
+</code></pre></div><p>这里 <code>doRegister()方法</code>将NioSocketChannel注册到Sub Reactor中的<code>Selector</code>上。</p> <div class="language- extra-class"><pre class="language-text"><code>public abstract class AbstractNioChannel extends AbstractChannel {
+
+    @Override
+    protected void doRegister() throws Exception {
+        boolean selected = false;
+        for (;;) {
+            try {
+                selectionKey = javaChannel().register(eventLoop().unwrappedSelector(), 0, this);
+                return;
+            } catch (CancelledKeyException e) {
+                ...............省略...............
+            }
+        }
+    }
+
+}
+</code></pre></div><p>这里是Netty客户端<code>NioSocketChannel</code>与JDK NIO 原生 SocketChannel关联的地方。此时注册的<code>IO事件</code>依然是<code>0</code>。目的也是只是为了获取NioSocketChannel在Selector中的<code>SelectionKey</code>。</p> <p>同时通过<code>SelectableChannel#register</code>方法将Netty自定义的NioSocketChannel（这里的this指针）附着在SelectionKey的attechment属性上，完成Netty自定义Channel与JDK NIO Channel的关系绑定。这样在每次对Selector进行IO就绪事件轮询时，Netty 都可以从 JDK NIO Selector返回的SelectionKey中获取到自定义的Channel对象（这里指的就是NioSocketChannel）。</p> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNiaBHZIoOsiaAmdqQxwtXvIIgHxoYrpp2AeUMs5qEla9BoHU4wkg4Sgjqg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">channel与SelectionKey对应关系.png</p> <p>随后调用<code>pipeline.invokeHandlerAddedIfNeeded()</code>回调客户端NioSocketChannel上pipeline中的所有ChannelHandler的<code>handlerAdded方法</code>，此时<code>pipeline</code>的结构中只有一个<code>ChannelInitializer</code>。最终会在<code>ChannelInitializer#handlerAdded</code>回调方法中初始化客户端<code>NioSocketChannel</code>的<code>pipeline</code>。</p> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNia6cNkLIW571QH74LhkCfFpibJSm1cwDQTQBcxClKehQVGRR3ibdP9Ea5A/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">客户端channel pipeline初始结构.png</p> <div class="language- extra-class"><pre class="language-text"><code>public abstract class ChannelInitializer&lt;C extends Channel&gt; extends ChannelInboundHandlerAdapter {
+
+    @Override
+    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+        if (ctx.channel().isRegistered()) {
+            if (initChannel(ctx)) {
+                //初始化工作完成后，需要将自身从pipeline中移除
+                removeState(ctx);
+            }
+        }
+    }
+
+    protected abstract void initChannel(C ch) throws Exception;
+}
+</code></pre></div><blockquote><p>关于对Channel中pipeline的详细初始化过程，对细节部分感兴趣的同学可以回看下<a href="https://mp.weixin.qq.com/s?__biz=Mzg2MzU3Mjc3Ng==&amp;mid=2247484005&amp;idx=1&amp;sn=52f51269902a58f40d33208421109bc3&amp;chksm=ce77c422f9004d340e5b385ef6ba24dfba1f802076ace80ad6390e934173a10401e64e13eaeb&amp;scene=21#wechat_redirect" target="_blank" rel="noopener noreferrer">?《详细图解Netty Reactor启动全流程》<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></p></blockquote> <p>此时客户端NioSocketChannel中的pipeline中的结构就变为了我们自定义的样子，在示例代码中我们自定义的<code>ChannelHandler</code>为<code>EchoServerHandler</code>。</p> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNiaTdUsySmibYW5g2lI0f8hN484CkfWrAjns8jib4vPJfrta5gpuxH5lyvQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">客户端channel pipeline结构.png</p> <div class="language- extra-class"><pre class="language-text"><code>@Sharable
+public class EchoServerHandler extends ChannelInboundHandlerAdapter {
+
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+        ctx.write(msg);
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) {
+
+        ctx.flush();
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        // Close the connection when an exception is raised.
+        cause.printStackTrace();
+        ctx.close();
+    }
+}
+</code></pre></div><p>当客户端NioSocketChannel中的pipeline初始化完毕后，netty就开始调用<code>safeSetSuccess(promise)方法</code>回调<code>regFuture</code>中注册的<code>ChannelFutureListener</code>，通知客户端NioSocketChannel已经成功注册到Sub Reactor上了。</p> <div class="language- extra-class"><pre class="language-text"><code>               childGroup.register(child).addListener(new ChannelFutureListener() {
+                    @Override
+                    public void operationComplete(ChannelFuture future) throws Exception {
+                        if (!future.isSuccess()) {
+                            forceClose(child, future.cause());
+                        }
+                    }
+                });
+</code></pre></div><blockquote><p>在服务端NioServerSocketChannel注册的时候我们会在listener中向Main Reactor提交<code>bind绑定端口地址任务</code>。但是在<code>NioSocketChannel</code>注册的时候，只会在<code>listener</code>中处理一下注册失败的情况。</p></blockquote> <p>当Sub Reactor线程通知ChannelFutureListener注册成功之后，随后就会调用<code>pipeline.fireChannelRegistered()</code>在客户端NioSocketChannel的pipeline中传播<code>ChannelRegistered事件</code>。</p> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNiaAGdSxbwsoLP3mhiaKahLtKrMRdE9IXvMOyxgInz5UweSSrv8H9HwNKQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">传播ChannelRegister事件.png</p> <p><strong>这里笔者重点要强调下</strong>，在之前介绍NioServerSocketChannel注册的时候，我们提到因为此时NioServerSocketChannel并未绑定端口地址，所以这时的NioServerSocketChannel并未激活，这里的<code>isActive()</code>返回<code>false</code>。<code>register0方法</code>直接返回。</p> <blockquote><p>服务端NioServerSocketChannel判断是否激活的标准为端口是否绑定成功。</p></blockquote> <div class="language- extra-class"><pre class="language-text"><code>public class NioServerSocketChannel extends AbstractNioMessageChannel
+                             implements io.netty.channel.socket.ServerSocketChannel {
+    @Override
+    public boolean isActive() {
+        return isOpen() &amp;&amp; javaChannel().socket().isBound();
+    }
+}
+</code></pre></div><blockquote><p>客户端<code>NioSocketChannel</code>判断是否激活的标准为是否处于<code>Connected状态</code>。那么显然这里肯定是处于<code>connected状态</code>的。</p></blockquote> <div class="language- extra-class"><pre class="language-text"><code>    @Override
+    public boolean isActive() {
+        SocketChannel ch = javaChannel();
+        return ch.isOpen() &amp;&amp; ch.isConnected();
+    }
+</code></pre></div><p><code>NioSocketChannel</code>已经处于<code>connected状态</code>，这里并不需要绑定端口，所以这里的<code>isActive()</code>返回<code>true</code>。</p> <div class="language- extra-class"><pre class="language-text"><code>           if (isActive()) {
+                    /**
+                     * 客户端SocketChannel注册成功后会走这里，在channelActive事件回调中注册OP_READ事件
+                     * */
+                    if (firstRegistration) {
+                        //触发channelActive事件
+                        pipeline.fireChannelActive();
+                    } else if (config().isAutoRead()) {
+                        .......省略..........
+                    }
+                }
+            }
+</code></pre></div><p>最后调用<code>pipeline.fireChannelActive()</code>在NioSocketChannel中的pipeline传播<code>ChannelActive事件</code>，最终在<code>pipeline</code>的头结点<code>HeadContext</code>中响应并注册<code>OP_READ事件</code>到<code>Sub Reactor</code>中的<code>Selector</code>上。</p> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNiaaDWO56Rib0H2YViadZkbq3WErIBg6duwk22WMHcnt41ZWlS9WTtaYbcw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">传播ChannelActive事件.png</p> <div class="language- extra-class"><pre class="language-text"><code>public abstract class AbstractNioChannel extends AbstractChannel { {
+
+    @Override
+    protected void doBeginRead() throws Exception {
+        ..............省略................
+
+        final int interestOps = selectionKey.interestOps();
+        /**
+         * 1：ServerSocketChannel 初始化时 readInterestOp设置的是OP_ACCEPT事件
+         * 2：SocketChannel 初始化时 readInterestOp设置的是OP_READ事件
+         * */
+        if ((interestOps &amp; readInterestOp) == 0) {
+            //注册监听OP_ACCEPT或者OP_READ事件
+            selectionKey.interestOps(interestOps | readInterestOp);
+        }
+    }
+
+}
+</code></pre></div><blockquote><p>注意这里的<code>readInterestOp</code>为客户端<code>NioSocketChannel</code>在初始化时设置的<code>OP_READ事件</code>。</p></blockquote> <hr> <p>到这里，Netty中的<code>Main Reactor</code>接收连接的整个流程，我们就介绍完了，此时Netty中主从Reactor组的结构就变为：</p> <p><img src="https://mmbiz.qpic.cn/mmbiz_png/sOIZXFW0vUZnjTia9x6OdAvgr1icM1ZsNiabSEUJ3uzXNIS7OGAbpeQ3ib7ZoCM6RlzjglPlzJ4Pud3L0oWSzN0iaAw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片">主从Reactor组完整结构.png</p> <h2 id="总结"><a href="#总结" class="header-anchor">#</a> 总结</h2> <p>本文我们介绍了<code>NioServerSocketChannel</code>处理客户端连接事件的整个过程。</p> <ul><li>接收连接的整个处理框架。</li> <li>影响Netty接收连接吞吐的Bug产生的原因，以及修复的方案。</li> <li>创建并初始化客户端<code>NioSocketChannel</code>。</li> <li>初始化<code>NioSocketChannel</code>中的<code>pipeline</code>。</li> <li>客户端<code>NioSocketChannel</code>向<code>Sub Reactor</code>注册的过程</li></ul> <p>其中我们也对比了<code>NioServerSocketChannel</code>与<code>NioSocketChannel</code>在创建初始化以及后面向<code>Reactor</code>注册过程中的差异之处。</p> <p>当客户端<code>NioSocketChannel</code>接收完毕并向<code>Sub Reactor</code>注册成功后，那么接下来<code>Sub Reactor</code>就开始监听注册其上的所有客户端<code>NioSocketChannel</code>的<code>OP_READ事件</code>，并等待客户端向服务端发送网络数据。</p> <p>后面<code>Reactor</code>的主角就该变为<code>Sub Reactor</code>以及注册在其上的客户端<code>NioSocketChannel</code>了。</p> <p>下篇文章，我们将会讨论Netty是如何接收网络数据的~~~~ 我们下篇文章见~~</p></div></div>  <div class="page-edit"><div class="edit-link"><a href="https://github.com/echo-lxy/echo-system-design/edit/master/docs/Netty 系统设计/25.四、深入 Netty 核心/15.第四课：Netty 如何高效接收网络连接.md" target="_blank" rel="noopener noreferrer">编辑</a> <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></div> <!----> <div class="last-updated"><span class="prefix">上次更新于:</span> <span class="time">2024/09/19, 03:26:41</span></div></div> <div class="page-nav-wapper"><!----> <div class="page-nav"><p class="inner"><span class="prev">
+        ←
+        <a href="/pages/830f05/" class="prev">第三课：Netty核心引擎Reactor的运转架构</a></span> <span class="next"><a href="/pages/9cb8c1/">第五课：Netty 如何高效接收网络数据</a>→
+      </span></p></div></div></div> <!----></main></div> <div class="footer"><div class="icons"><a href="mailto:lixinyang2002@163.com" title="发邮件" target="_blank" class="iconfont icon-youjian"></a><a href="https://github.com/echo-lxy" title="GitHub" target="_blank" class="iconfont icon-github"></a><a href="https://music.163.com/#/playlist?id=755597173" title="听音乐" target="_blank" class="iconfont icon-erji"></a></div> 
+  Theme by
+  <a href="https://github.com/xugaoyi/vuepress-theme-vdoing" target="_blank" title="本站主题">Vdoing</a> 
+    | Copyright © 2024-2024
+    <span>Xinyang Li | MIT License</span></div> <div class="buttons"><div title="返回顶部" class="button blur go-to-top iconfont icon-fanhuidingbu" style="display:none;"></div> <div title="去评论" class="button blur go-to-comment iconfont icon-pinglun" style="display:none;"></div> <div title="主题模式" class="button blur theme-mode-but iconfont icon-zhuti"><ul class="select-box" style="display:none;"><li class="iconfont icon-zidong">
+          跟随系统
+        </li><li class="iconfont icon-rijianmoshi">
+          浅色模式
+        </li><li class="iconfont icon-yejianmoshi">
+          深色模式
+        </li><li class="iconfont icon-yuedu">
+          阅读模式
+        </li></ul></div></div> <!----> <!----> <!----></div><div class="global-ui"><div></div></div></div>
+    <script src="/assets/js/app.6c7acbd0.js" defer></script><script src="/assets/js/2.933750c6.js" defer></script><script src="/assets/js/54.0bbf2ba5.js" defer></script><script src="/assets/js/7.7eb70372.js" defer></script>
+  </body>
+</html>
