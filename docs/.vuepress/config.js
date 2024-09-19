@@ -23,6 +23,7 @@ module.exports = {
 
   // 主题配置
   themeConfig: {
+    rightMenuBar: true,
     // 站点配置（首页 & 文章页）
     blogInfo: {
       blogCreate: "2024-09-10", // 博客创建时间
